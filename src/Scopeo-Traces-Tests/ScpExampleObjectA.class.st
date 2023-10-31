@@ -10,9 +10,18 @@ Class {
 }
 
 { #category : 'examples' }
+ScpExampleObjectA >> exampleAccessorCall [
+
+	^ exampleObjectB exampleAccessor.
+]
+
+{ #category : 'examples' }
 ScpExampleObjectA >> exampleMethod [
 
 	exampleObjectB exampleSetter: 'example'.
+	
+	[ exampleObjectB exampleSetter: 'exampleInBlock' ] value.
+	
 	^ exampleObjectB exampleAccessor.
 ]
 
@@ -20,4 +29,27 @@ ScpExampleObjectA >> exampleMethod [
 ScpExampleObjectA >> exampleObjectB: anObject [
 
 	exampleObjectB := anObject
+]
+
+{ #category : 'examples' }
+ScpExampleObjectA >> exampleSetterCall [
+
+	exampleObjectB exampleSetter: 'example'.
+
+]
+
+{ #category : 'examples' }
+ScpExampleObjectA >> exampleSetterCallInBlock [
+
+	[ exampleObjectB exampleSetter: 'exampleInBlock' ] value.
+	
+]
+
+{ #category : 'examples' }
+ScpExampleObjectA >> exampleSetterCallInBlockInBlock [
+
+	| value |
+	value := 'exampleInBlock'.
+	[ :v | [ exampleObjectB exampleSetter: v ] value ] value: value.
+	
 ]

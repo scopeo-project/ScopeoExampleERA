@@ -48,6 +48,16 @@ ScpTracingInterpreter >> rejectPackages: aPackageNameCollection [
 	rejectedPackages := aPackageNameCollection
 ]
 
+{ #category : 'as yet unclassified' }
+ScpTracingInterpreter >> senderSelectorFromContext: aContext [
+
+	| context |
+	context := aContext isBlockContext 
+		ifTrue: [ aContext closure outerContext ]
+		ifFalse: [ aContext ].
+	^ context receiver ifNotNil: [ context messageNode selector ]
+]
+
 { #category : 'services' }
 ScpTracingInterpreter >> traceExpressionString: anExpresssionString [
 
@@ -83,6 +93,7 @@ ScpTracingInterpreter >> visitAssignmentNode: aRBAssignmentNode [
 ScpTracingInterpreter >> visitMessageNode: aRBMessageNode [
 
 	| arguments receiver method newContext |
+
 	(self isRejected: self currentContext receiver)
 		ifTrue: [ ^ self visitMessageNodeWithoutTracing: aRBMessageNode ].
 
@@ -100,12 +111,11 @@ ScpTracingInterpreter >> visitMessageNode: aRBMessageNode [
 
 	" Lookup"
 	method := newContext methodOrBlock.
-
+	
 	storage addMessage: (ScpMessage new
 			 id: programCounter;
 			 sender: self currentContext receiver;
-			 senderSelector: (self currentContext messageNode ifNotNil: [
-						  self currentContext messageNode selector ]);
+			 senderSelector: (self senderSelectorFromContext: self currentContext);
 			 selector: method selector;
 			 receiver: receiver;
 			 arguments: arguments;

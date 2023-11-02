@@ -59,9 +59,9 @@ ScpTracingInterpreter >> senderSelectorFromContext: aContext [
 ]
 
 { #category : 'services' }
-ScpTracingInterpreter >> traceExpressionString: anExpresssionString [
+ScpTracingInterpreter >> traceExpressionString: anExpressionString [
 
-	^ self evaluateAST: (RBParser parseExpression: anExpresssionString)
+	^ self evaluateAST: (RBParser parseExpression: anExpressionString)
 ]
 
 { #category : 'initialization' }
@@ -87,6 +87,14 @@ ScpTracingInterpreter >> visitAssignmentNode: aRBAssignmentNode [
 				 yourself) ].
 
 	self currentContext assignVariable: name value: value
+]
+
+{ #category : 'visiting' }
+ScpTracingInterpreter >> visitBlockNode: aRBBlockNode [
+
+	self stackPush: (DASTBlock new
+			 initializeWith: aRBBlockNode;
+			 outerContext: currentContext)
 ]
 
 { #category : 'private' }

@@ -1,15 +1,13 @@
 Class {
-	#name : 'ScpTracesTest',
-	#superclass : 'TestCase',
+	#name : #ScpTracesTest,
+	#superclass : #TestCase,
 	#instVars : [
 		'traces'
 	],
-	#category : 'Scopeo-Traces-Tests-',
-	#package : 'Scopeo-Traces-Tests',
-	#tag : ''
+	#category : #'Scopeo-Traces-Tests-'
 }
 
-{ #category : 'running' }
+{ #category : #running }
 ScpTracesTest >> setUp [
 
 	super setUp.
@@ -17,10 +15,10 @@ ScpTracesTest >> setUp [
 	traces := ScpTraces new.
 	traces tracer: ScpTracingInterpreter new.
 	"traces tracer: ScopeoInstrumenterTracer new."
-	traces forPackages: { ScpExampleObjectA packageName }
+	traces forPackages: { ScpExampleObjectA package name }
 ]
 
-{ #category : 'running' }
+{ #category : #running }
 ScpTracesTest >> tearDown [
 
 	super tearDown.
@@ -28,7 +26,7 @@ ScpTracesTest >> tearDown [
 	traces clean
 ]
 
-{ #category : 'tests' }
+{ #category : #tests }
 ScpTracesTest >> testExampleAccessorCall [
 
 	| stateUdpates messagesToAccessor |
@@ -54,7 +52,7 @@ ScpTracesTest >> testExampleAccessorCall [
 	self assert: messagesToAccessor first arguments size equals: 0.
 ]
 
-{ #category : 'tests' }
+{ #category : #tests }
 ScpTracesTest >> testExampleInit [
 
 	| stateUdpates |
@@ -78,7 +76,7 @@ ScpTracesTest >> testExampleInit [
 		equals: ScpExampleObjectB
 ]
 
-{ #category : 'tests' }
+{ #category : #tests }
 ScpTracesTest >> testExampleSetterCall [
 
 	| stateUdpates messagesToSetter |
@@ -120,7 +118,7 @@ ScpTracesTest >> testExampleSetterCall [
 	self assert: messagesToSetter first arguments first equals: 'example'
 ]
 
-{ #category : 'tests' }
+{ #category : #tests }
 ScpTracesTest >> testExampleSetterCallInBlock [
 
 	| stateUdpates messagesToSetter |
@@ -164,7 +162,7 @@ ScpTracesTest >> testExampleSetterCallInBlock [
 		equals: 'exampleInBlock'
 ]
 
-{ #category : 'tests' }
+{ #category : #tests }
 ScpTracesTest >> testExampleSetterCallInBlockInBlock [
 
 	| stateUdpates messagesToSetter |

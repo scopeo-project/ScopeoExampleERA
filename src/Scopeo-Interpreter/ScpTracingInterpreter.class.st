@@ -1,33 +1,30 @@
 Class {
-	#name : 'ScpTracingInterpreter',
-	#superclass : 'ScpInterpreter',
+	#name : #ScpTracingInterpreter,
+	#superclass : #ScpInterpreter,
 	#instVars : [
 		'defaultInterpreter',
-		'rejectedPackages',
-		'rejectedClasses',
 		'storage',
 		'packages'
 	],
 	#classInstVars : [
 		'logger'
 	],
-	#category : 'Scopeo-Interpreter',
-	#package : 'Scopeo-Interpreter'
+	#category : #'Scopeo-Interpreter'
 }
 
-{ #category : 'services' }
+{ #category : #services }
 ScpTracingInterpreter >> clean [
 
 	"Do nothing"
 ]
 
-{ #category : 'environments' }
+{ #category : #environments }
 ScpTracingInterpreter >> forPackages: aPackageNameCollection [
 
 	packages := aPackageNameCollection
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 ScpTracingInterpreter >> getSenderContext: aContext [
 
 	aContext isBlockContext
@@ -36,38 +33,23 @@ ScpTracingInterpreter >> getSenderContext: aContext [
 	 
 ]
 
-{ #category : 'initialization' }
+{ #category : #initialization }
 ScpTracingInterpreter >> initialize [
 
 	defaultInterpreter := ScpDefaultInterpreter new.
-
-	rejectedPackages := OrderedCollection new.
-	rejectedClasses := OrderedCollection new.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 ScpTracingInterpreter >> isRejected: anObject [
 
 	| senderClass|
 	senderClass := anObject class.
 	^ (senderClass ~~ UndefinedObject) and: [ 
-			(packages includes: senderClass packageName) not 
+			(packages includes: senderClass package name) not 
 		]
 ]
 
-{ #category : 'parameters' }
-ScpTracingInterpreter >> rejectClasses: aClassNameCollection [
-
-	rejectedClasses := aClassNameCollection
-]
-
-{ #category : 'parameters' }
-ScpTracingInterpreter >> rejectPackages: aPackageNameCollection [
-
-	rejectedPackages := aPackageNameCollection
-]
-
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 ScpTracingInterpreter >> senderSelectorFromContext: aContext [
 	
 	| context |
@@ -75,19 +57,19 @@ ScpTracingInterpreter >> senderSelectorFromContext: aContext [
 	^  context receiver ifNotNil: [ context messageNode selector ]
 ]
 
-{ #category : 'services' }
+{ #category : #services }
 ScpTracingInterpreter >> traceExpressionString: anExpressionString [
 
 	^ self evaluateAST: (RBParser parseExpression: anExpressionString)
 ]
 
-{ #category : 'initialization' }
+{ #category : #initialization }
 ScpTracingInterpreter >> traceStorage: aScpTraceStorage [
 
 	storage := aScpTraceStorage
 ]
 
-{ #category : 'private' }
+{ #category : #private }
 ScpTracingInterpreter >> visitAssignmentNode: aRBAssignmentNode [
 
 	| variable name value |
@@ -106,7 +88,7 @@ ScpTracingInterpreter >> visitAssignmentNode: aRBAssignmentNode [
 	self currentContext assignVariable: name value: value
 ]
 
-{ #category : 'visiting' }
+{ #category : #visiting }
 ScpTracingInterpreter >> visitBlockNode: aRBBlockNode [
 
 	self stackPush: (DASTBlock new
@@ -114,7 +96,7 @@ ScpTracingInterpreter >> visitBlockNode: aRBBlockNode [
 			 outerContext: currentContext)
 ]
 
-{ #category : 'private' }
+{ #category : #private }
 ScpTracingInterpreter >> visitMessageNode: aRBMessageNode [
 
 	| arguments receiver method newContext |
@@ -170,7 +152,7 @@ ScpTracingInterpreter >> visitMessageNode: aRBMessageNode [
 		values: arguments
 ]
 
-{ #category : 'private' }
+{ #category : #private }
 ScpTracingInterpreter >> visitMessageNodeWithoutTracing: aRBMessageNode [
 
 	defaultInterpreter currentContext: self currentContext.

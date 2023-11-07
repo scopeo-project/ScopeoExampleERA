@@ -1,17 +1,16 @@
 Class {
-	#name : 'ScpInterpreter',
-	#superclass : 'DASTInterpreter',
-	#category : 'Scopeo-Interpreter',
-	#package : 'Scopeo-Interpreter'
+	#name : #ScpInterpreter,
+	#superclass : #DASTInterpreter,
+	#category : 'Scopeo-Interpreter'
 }
 
-{ #category : 'api' }
+{ #category : #api }
 ScpInterpreter >> currentContext: aContext [
 
 	currentContext := aContext
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ScpInterpreter >> programCounter: aCounter [
 
 	programCounter := aCounter

@@ -15,8 +15,8 @@ ScpTracesTest >> setUp [
 	super setUp.
 
 	traces := ScpTraces new.
-	"traces tracer: ScpTracingInterpreter new."
-	traces tracer: ScopeoInstrumenterTracer new.
+	traces tracer: ScpTracingInterpreter new.
+	"traces tracer: ScopeoInstrumenterTracer new."
 	traces forPackages: { ScpExampleObjectA packageName }
 ]
 

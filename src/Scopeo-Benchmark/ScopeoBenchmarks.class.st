@@ -5,7 +5,8 @@ Class {
 		'numberOfBlockIterations',
 		'numberOfMeasures',
 		'results',
-		'pharoBlock'
+		'code',
+		'codeText'
 	],
 	#category : 'Scopeo-Benchmark',
 	#package : 'Scopeo-Benchmark'
@@ -38,21 +39,9 @@ ScopeoBenchmarks >> exportResults: aCSVFilePath [
 { #category : 'initialization' }
 ScopeoBenchmarks >> initialize [
 	
-	pharoBlock := [ [ AMParsingBugExample new testStudentPrinting ] on: TestFailure do: [ ] ].
+	code := [ [ AMParsingBugExample new testStudentPrinting ] on: TestFailure do: [ "ignore" ] ].
+	codeText := '[AMParsingBugExample new testStudentPrinting] on: TestFailure do: [ "ignore" ]'.
 	results := Dictionary new.
-]
-
-{ #category : 'private' }
-ScopeoBenchmarks >> measuresAsArray [
-
-	| array |
-	self results ifEmpty: [ ^ Array new ].
-	array := CTArray2D width: self results size height: numberOfMeasures.
-	1 to: self results size do: [ :i |
-		array atColumn: i put: ((self results values at: i) measures).
-	].
-	^ array
-	
 ]
 
 { #category : 'services' }
@@ -70,13 +59,14 @@ ScopeoBenchmarks >> numberOfMeasures: anObject [
 { #category : 'services' }
 ScopeoBenchmarks >> performWithDAST [
 	
-	| interpreter |
+	| interpreter ast |
 
 	interpreter	:= DASTInterpreter new.
+	ast := RBParser parseExpression: codeText.
 
 	results at: 'dast' put: (ScpBenchmark new
 		label: 'DAST';
-		block: [ interpreter evaluateAST: (RBParser parseExpression: 'AMParsingBugExample new testStudentPrinting') ];
+		block: [ interpreter evaluateAST: ast];
 		numberOfBlockIterations: numberOfBlockIterations;
 		numberOfMeasures: numberOfMeasures;
 		perform;
@@ -89,16 +79,15 @@ ScopeoBenchmarks >> performWithDASTAndTraces [
 
 	| scpTraces |
 	scpTraces := ScpTraces new
-		                     tracer: ScpTracingInterpreter new;
-		                     traceStorage: ScpFakeTracesMemoryStorage new;
-		                     forPackages:
-			                     #( 'AmmoliteMagenta' 'AmmoliteMagenta-Tests' );
-		                     yourself.
+		             tracer: ScpTracingInterpreter new;
+		             traceStorage: ScpFakeTracesMemoryStorage new;
+		             forPackages:
+			             #( 'AmmoliteMagenta' 'AmmoliteMagenta-Tests' );
+		             yourself.
 	results at: 'dast-traces' put: (ScpBenchmark new
 			 label: 'DAST with traces';
 			 block: [
-				 scpTraces scan:
-						 'AMParsingBugExample new testStudentPrinting' ];
+				 scpTraces scan: codeText ];
 			 numberOfBlockIterations: numberOfBlockIterations;
 			 numberOfMeasures: numberOfMeasures;
 			 perform;
@@ -119,7 +108,7 @@ ScopeoBenchmarks >> performWithInstrumenter [
 
 	results at: 'instrumenter' put: (ScpBenchmark new
 			 label: 'Instrumenter';
-			 block: pharoBlock;
+			 block: code;
 			 numberOfBlockIterations: numberOfBlockIterations;
 			 numberOfMeasures: numberOfMeasures;
 			 perform;
@@ -141,8 +130,7 @@ ScopeoBenchmarks >> performWithInstrumenterAndTraces [
 
 	results at: 'instrumenter-traces' put: (ScpBenchmark new
 			 label: 'Instrumenter with traces';
-			 block: [
-				 [ scpTraces scan: 'AMParsingBugExample new testStudentPrinting'] on: TestFailure do: [ "ignore" ] ];
+			 block: [ scpTraces scan: codeText ];
 			 numberOfBlockIterations: numberOfBlockIterations;
 			 numberOfMeasures: numberOfMeasures;
 			 perform;
@@ -175,7 +163,7 @@ ScopeoBenchmarks >> performWithPharo [
 
 	results at: 'pharo' put: (ScpBenchmark new
 		label: 'Pharo';
-		block: pharoBlock;
+		block: code;
 		numberOfBlockIterations: numberOfBlockIterations;
 		numberOfMeasures: numberOfMeasures;
 		perform;

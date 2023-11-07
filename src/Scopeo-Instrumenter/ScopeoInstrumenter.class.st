@@ -47,8 +47,8 @@ ScopeoInstrumenter >> initialize [
 	assignmentNodes := OrderedCollection new.
 	errors := OrderedCollection new.
 
-	traces := Array new: 100000.
-	pc := 0
+	pc := 0.
+	self resetTraces
 ]
 
 { #category : 'instrumentation' }
@@ -120,6 +120,13 @@ ScopeoInstrumenter >> methodsToInstrument [
 ScopeoInstrumenter >> packages: anObject [
 
 	packages := anObject
+]
+
+{ #category : 'initialization' }
+ScopeoInstrumenter >> resetTraces [
+
+
+	traces := Array new: 100000.
 ]
 
 { #category : 'metalinks' }

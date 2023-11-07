@@ -61,8 +61,6 @@ ScpTraces >> initialize [
 	
 	self forPackages: OrderedCollection new.
 	
-	self rejectPackages: self class defaultRejectedPackages.
-	self rejectClasses: self class defaultRejectedClasses
 ]
 
 { #category : 'parameters' }

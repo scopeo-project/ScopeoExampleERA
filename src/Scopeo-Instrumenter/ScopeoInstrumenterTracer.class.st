@@ -78,6 +78,7 @@ ScopeoInstrumenterTracer >> traceExpressionString: anExpressionString [
 	| result |
 	result := self class compiler evaluate: anExpressionString.
 	self read: instrumenter traces.
+	instrumenter resetTraces.
 	^ result
 ]
 

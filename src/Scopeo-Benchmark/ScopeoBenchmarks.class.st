@@ -155,14 +155,13 @@ ScopeoBenchmarks >> performWithInstrumenterAndTraces [
 ScopeoBenchmarks >> performWithInstrumenterInstallation [
 
 	| instrumenter |
-	
 	instrumenter := ScopeoInstrumenter new.
-	instrumenter packages: (#( 'AmmoliteMagenta' 'AmmoliteMagenta-Tests' )
-			                 collect: #asPackage).
+	instrumenter packages:
+		(#( 'AmmoliteMagenta' 'AmmoliteMagenta-Tests' ) collect: #asPackage).
 
 	results at: 'instrumenter-installation' put: (ScpBenchmark new
 			 label: 'Instrumenter installation time';
-			 block: [  instrumenter instrumentPackages ];
+			 block: [ instrumenter instrumentPackages. instrumenter uninstall ];
 			 numberOfBlockIterations: numberOfBlockIterations;
 			 numberOfMeasures: numberOfMeasures;
 			 perform;

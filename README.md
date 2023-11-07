@@ -1,8 +1,20 @@
 # ScopeoExampleERA
 
 Table of contents:
- 1. [Example](#example-of-scopeo-usage-on-a-failing-unit-test)
- 2. [Benchmark](#how-to-run-a-benchmark)
+ 1. [Install](#installation)
+ 2. [Example](#example-of-scopeo-usage-on-a-failing-unit-test)
+ 3. [Benchmark](#how-to-run-a-benchmark)
+
+## Installation
+
+To install the project, execute the following baseline in a Pharo 12 image.
+
+```st
+Metacello new
+  githubUser: 'ValentinBourcier' project: 'ScopeoExampleERA' commitish: 'main' path: 'src';
+  baseline: 'ScopeoExampleERA';
+  load
+```
 
 ## Example of Scopeo usage on a failing unit test
 
@@ -82,12 +94,19 @@ Step 7. In AMParsingBugExample >> #students we search for Raymond-Tristan, our f
 (AMParsingBugExample >> #students) browse.
 ```
 
-## How to run a benchmark?
+## How to run benchmarks?
 
-Scopeo uses an interpreter, DAST, to evaluate the source code and record traces of the execution.  
-To evaluate the overhead of the interpreation and traces recording we need a benchmark.  
+To perform queries about the execution, the tool needs to record information about the program execution.
+To calculate the overhead we performed benchmarks.
 
-The benchmark class we created measure the time required by Pharo 12, DAST, and Scopeo to evaluate use the unit test presented in the [Example](#example-of-scopeo-usage-on-a-failing-unit-test).  
+We performed following benchmarks using the unit test presented in the [Example](#example-of-scopeo-usage-on-a-failing-unit-test) as evaluation program.
+The benchmark execute the code:
+1. **performWithPharo**: With Pharo 12
+2. **performWithDAST**: With DAST interpreter (an AST interpreter dedicated to debugging).
+3. **performWithDASTAndTraces**: With a modified DAST intepreter that sends the program information to another object, for later storage.
+4. **performWithInstrumenter**: After instrumentation of the code by a library relying on MetaLink from Pharo Reflectivity library.
+5. **performWithInstrumenterAndTraces**: After instrumentation of the code by the library modified to transform the raw data and send it to another object, for later storage.
+6. **performWithInstrumenterInstallation**: Computes the time required to install the instrumentation.
 
 There is two parameters:
 1. **loops** The number of time the unit test must be executed to represent on measure point.
@@ -95,20 +114,19 @@ There is two parameters:
 2. **measures** The number of measure point desired.
 
 ```st
-ScopeoBenchmark new
-	loops: 100;
-	measures: 100;
-	execute;
-	inspect
+ScopeoBenchmarks new
+	numberOfBlockIterations: 100;
+	numberOfMeasures: 100;
+	performWithPharo;
+	performWithDAST;
+	performWithDASTAndTraces;
+	performWithInstrumenter;
+	performWithInstrumenterAndTraces;
+	performWithInstrumenterInstallation;
+	exportRawResults: '/Users/<username>/test-benchmark-raw.csv';
+	exportResults: '/Users/<username>/test-benchmark.csv'.
 ```
 
-Instead of opening an inspector at the end of the benchmark, you can choose to export the data to a CSV file by doing:
+The message `exportRawResults:` dump the measures in milliseconds at the given CSV path.
+The message `exportRawResults:` dump the average and confidence interval of the measures at the given CSV path.
 
-
-```st
-ScopeoBenchmark new
-	loops: 100;
-	measures: 100;
-	execute;
-	exportToCSV: '/Users/<myuser>/scopeo-benchmark.csv'
-```

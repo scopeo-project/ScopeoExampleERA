@@ -1,6 +1,6 @@
 Class {
 	#name : 'ScpDefaultInterpreter',
 	#superclass : 'ScpInterpreter',
-	#category : 'Scopeo-Traces',
-	#package : 'Scopeo-Traces'
+	#category : 'Scopeo-Interpreter',
+	#package : 'Scopeo-Interpreter'
 }

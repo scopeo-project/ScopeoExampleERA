@@ -5,14 +5,36 @@ Class {
 		'defaultInterpreter',
 		'rejectedPackages',
 		'rejectedClasses',
-		'storage'
+		'storage',
+		'packages'
 	],
 	#classInstVars : [
 		'logger'
 	],
-	#category : 'Scopeo-Traces',
-	#package : 'Scopeo-Traces'
+	#category : 'Scopeo-Interpreter',
+	#package : 'Scopeo-Interpreter'
 }
+
+{ #category : 'services' }
+ScpTracingInterpreter >> clean [
+
+	"Do nothing"
+]
+
+{ #category : 'environments' }
+ScpTracingInterpreter >> forPackages: aPackageNameCollection [
+
+	packages := aPackageNameCollection
+]
+
+{ #category : 'as yet unclassified' }
+ScpTracingInterpreter >> getSenderContext: aContext [
+
+	aContext isBlockContext
+		ifTrue: [ ^ self getSenderContext: aContext closure outerContext ]
+		ifFalse: [ ^ aContext  ]
+	 
+]
 
 { #category : 'initialization' }
 ScpTracingInterpreter >> initialize [
@@ -26,14 +48,11 @@ ScpTracingInterpreter >> initialize [
 { #category : 'as yet unclassified' }
 ScpTracingInterpreter >> isRejected: anObject [
 
-	| senderClass packageIsRejected classIsRejected |
+	| senderClass|
 	senderClass := anObject class.
-	packageIsRejected := rejectedPackages includes:
-		                     senderClass package name.
-	classIsRejected := rejectedClasses includes: senderClass name.
-
-	^ (senderClass ~~ UndefinedObject) and: [
-		  packageIsRejected or: [ classIsRejected ] ]
+	^ (senderClass ~~ UndefinedObject) and: [ 
+			(packages includes: senderClass packageName) not 
+		]
 ]
 
 { #category : 'parameters' }
@@ -50,12 +69,10 @@ ScpTracingInterpreter >> rejectPackages: aPackageNameCollection [
 
 { #category : 'as yet unclassified' }
 ScpTracingInterpreter >> senderSelectorFromContext: aContext [
-
+	
 	| context |
-	context := aContext isBlockContext 
-		ifTrue: [ aContext closure outerContext ]
-		ifFalse: [ aContext ].
-	^ context receiver ifNotNil: [ context messageNode selector ]
+	context := (self getSenderContext: aContext).
+	^  context receiver ifNotNil: [ context messageNode selector ]
 ]
 
 { #category : 'services' }
@@ -82,7 +99,7 @@ ScpTracingInterpreter >> visitAssignmentNode: aRBAssignmentNode [
 		storage addStateUpdate: (ScpStateUpdate new
 				 id: programCounter;
 				 object: self currentContext receiver;
-				 variable: variable variable;
+				 variable: variable variable name;
 				 newValue: value;
 				 yourself) ].
 

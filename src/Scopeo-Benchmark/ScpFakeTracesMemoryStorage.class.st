@@ -1,9 +1,8 @@
 Class {
 	#name : 'ScpFakeTracesMemoryStorage',
 	#superclass : 'Object',
-	#category : 'Scopeo-Benchmark-',
-	#package : 'Scopeo-Benchmark',
-	#tag : ''
+	#category : 'Scopeo-Benchmark',
+	#package : 'Scopeo-Benchmark'
 }
 
 { #category : 'adding' }

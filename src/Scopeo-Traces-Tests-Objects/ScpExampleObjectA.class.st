@@ -4,9 +4,8 @@ Class {
 	#instVars : [
 		'exampleObjectB'
 	],
-	#category : 'Scopeo-Traces-Tests-',
-	#package : 'Scopeo-Traces-Tests',
-	#tag : ''
+	#category : 'Scopeo-Traces-Tests-Objects',
+	#package : 'Scopeo-Traces-Tests-Objects'
 }
 
 { #category : 'examples' }
@@ -49,7 +48,6 @@ ScpExampleObjectA >> exampleSetterCallInBlock [
 ScpExampleObjectA >> exampleSetterCallInBlockInBlock [
 
 	| value |
-	value := 'exampleInBlock'.
-	[ :v | [ exampleObjectB exampleSetter: v ] value ] value: value.
-	
+	value := 'exampleInBlockInBlock'.
+	[ :v | [ exampleObjectB exampleSetter: v ] value ] value: value
 ]

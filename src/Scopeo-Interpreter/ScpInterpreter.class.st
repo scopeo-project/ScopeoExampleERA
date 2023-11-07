@@ -1,8 +1,8 @@
 Class {
 	#name : 'ScpInterpreter',
 	#superclass : 'DASTInterpreter',
-	#category : 'Scopeo-Traces',
-	#package : 'Scopeo-Traces'
+	#category : 'Scopeo-Interpreter',
+	#package : 'Scopeo-Interpreter'
 }
 
 { #category : 'api' }

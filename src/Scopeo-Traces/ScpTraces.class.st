@@ -36,18 +36,30 @@ ScpTraces class >> defaultRejectedPackages [
 ]
 
 { #category : 'services' }
+ScpTraces >> clean [
+
+	tracer clean
+]
+
+{ #category : 'services' }
 ScpTraces >> fetch: aPredicate [
 
 	^ storage fetch: aPredicate
 ]
 
+{ #category : 'parameters' }
+ScpTraces >> forPackages: aPackageNameCollection [
+
+	tracer forPackages: aPackageNameCollection
+]
+
 { #category : 'initialization' }
 ScpTraces >> initialize [
 
-	storage := ScpTraceMemoryStorage new.
-	tracer := ScpTracingInterpreter new
-		          traceStorage: storage;
-		          yourself.
+	self tracer: ScpTracingInterpreter new.
+	self traceStorage: ScpTraceMemoryStorage new.
+	
+	self forPackages: OrderedCollection new.
 	
 	self rejectPackages: self class defaultRejectedPackages.
 	self rejectClasses: self class defaultRejectedClasses
@@ -70,4 +82,19 @@ ScpTraces >> scan: aProgram [
 
 	storage clear.
 	^ tracer traceExpressionString: aProgram
+]
+
+{ #category : 'parameters' }
+ScpTraces >> traceStorage: aStorage [
+
+	storage := aStorage.
+	tracer traceStorage: aStorage.
+]
+
+{ #category : 'parameters' }
+ScpTraces >> tracer: aTracer [
+
+	tracer := aTracer.
+	storage ifNil: [ ^ self ].
+	tracer traceStorage: storage
 ]

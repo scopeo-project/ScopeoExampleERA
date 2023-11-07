@@ -1,17 +1,38 @@
 Class {
 	#name : 'ScpTracesTest',
 	#superclass : 'TestCase',
+	#instVars : [
+		'traces'
+	],
 	#category : 'Scopeo-Traces-Tests-',
 	#package : 'Scopeo-Traces-Tests',
 	#tag : ''
 }
 
+{ #category : 'running' }
+ScpTracesTest >> setUp [
+
+	super setUp.
+
+	traces := ScpTraces new.
+	"traces tracer: ScpTracingInterpreter new."
+	traces tracer: ScopeoInstrumenterTracer new.
+	traces forPackages: { ScpExampleObjectA packageName }
+]
+
+{ #category : 'running' }
+ScpTracesTest >> tearDown [
+
+	super tearDown.
+
+	traces clean
+]
+
 { #category : 'tests' }
 ScpTracesTest >> testExampleAccessorCall [
 
-	| traces stateUdpates messagesToAccessor |
-	traces := ScpTraces new.
- 	traces scan: '
+	| stateUdpates messagesToAccessor |
+	traces scan: '
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
@@ -36,9 +57,8 @@ ScpTracesTest >> testExampleAccessorCall [
 { #category : 'tests' }
 ScpTracesTest >> testExampleInit [
 
-	| traces stateUdpates |
-	traces := ScpTraces new.
- 	traces scan: '
+	| stateUdpates |
+	traces scan: '
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
@@ -49,17 +69,20 @@ ScpTracesTest >> testExampleInit [
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
 
 	self assert: stateUdpates size equals: 1.
-	self assert: stateUdpates first object class equals: ScpExampleObjectA.
-	self assert: stateUdpates first variable name equals: #exampleObjectB.
-	self assert: stateUdpates first newValue class equals: ScpExampleObjectB.
+	self
+		assert: stateUdpates first object class
+		equals: ScpExampleObjectA.
+	self assert: stateUdpates first variable equals: #exampleObjectB.
+	self
+		assert: stateUdpates first newValue class
+		equals: ScpExampleObjectB
 ]
 
 { #category : 'tests' }
 ScpTracesTest >> testExampleSetterCall [
 
-	| traces stateUdpates messagesToSetter |
-	traces := ScpTraces new.
- 	traces scan: '
+	| stateUdpates messagesToSetter |
+	traces scan: '
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
@@ -69,28 +92,39 @@ ScpTracesTest >> testExampleSetterCall [
 	'.
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
-	messagesToSetter := traces fetch: (ScpIsMessage new and: (ScpMessageSelectorEq value: #exampleSetter:)).
+	messagesToSetter := traces fetch:
+		                    (ScpIsMessage new and:
+			                     (ScpMessageSelectorEq value: #exampleSetter:)).
 
 	self assert: stateUdpates size equals: 2.
-	self assert: stateUdpates second object class equals: ScpExampleObjectB.
-	self assert: stateUdpates second variable name equals: #exampleInstanceVariable.
+	self
+		assert: stateUdpates second object class
+		equals: ScpExampleObjectB.
+	self
+		assert: stateUdpates second variable
+		equals: #exampleInstanceVariable.
 	self assert: stateUdpates second newValue equals: 'example'.
-	
+
 	self assert: messagesToSetter size equals: 1.
-	self assert: messagesToSetter first sender class equals: ScpExampleObjectA.
-	self assert: messagesToSetter first senderSelector equals: #exampleSetterCall.
+	self
+		assert: messagesToSetter first sender class
+		equals: ScpExampleObjectA.
+	self
+		assert: messagesToSetter first senderSelector
+		equals: #exampleSetterCall.
 	self assert: messagesToSetter first selector equals: #exampleSetter:.
-	self assert: messagesToSetter first receiver class equals: ScpExampleObjectB.
+	self
+		assert: messagesToSetter first receiver class
+		equals: ScpExampleObjectB.
 	self assert: messagesToSetter first arguments size equals: 1.
-	self assert: messagesToSetter first arguments first equals: 'example'.	
+	self assert: messagesToSetter first arguments first equals: 'example'
 ]
 
 { #category : 'tests' }
 ScpTracesTest >> testExampleSetterCallInBlock [
 
-	| traces stateUdpates messagesToSetter |
-	traces := ScpTraces new.
- 	traces scan: '
+	| stateUdpates messagesToSetter |
+	traces scan: '
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
@@ -100,49 +134,76 @@ ScpTracesTest >> testExampleSetterCallInBlock [
 	'.
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
-	messagesToSetter := traces fetch: (ScpIsMessage new and: (ScpMessageSelectorEq value: #exampleSetter:)).
+	messagesToSetter := traces fetch:
+		                    (ScpIsMessage new and:
+			                     (ScpMessageSelectorEq value: #exampleSetter:)).
 
 	self assert: stateUdpates size equals: 2.
-	self assert: stateUdpates second object class equals: ScpExampleObjectB.
-	self assert: stateUdpates second variable name equals: #exampleInstanceVariable.
+	self
+		assert: stateUdpates second object class
+		equals: ScpExampleObjectB.
+	self
+		assert: stateUdpates second variable
+		equals: #exampleInstanceVariable.
 	self assert: stateUdpates second newValue equals: 'exampleInBlock'.
-	
+
 	self assert: messagesToSetter size equals: 1.
-	self assert: messagesToSetter first sender class equals: ScpExampleObjectA.
-	self assert: messagesToSetter first senderSelector equals: #exampleSetterCallInBlock.
+	self
+		assert: messagesToSetter first sender class
+		equals: ScpExampleObjectA.
+	self
+		assert: messagesToSetter first senderSelector
+		equals: #exampleSetterCallInBlock.
 	self assert: messagesToSetter first selector equals: #exampleSetter:.
-	self assert: messagesToSetter first receiver class equals: ScpExampleObjectB.
+	self
+		assert: messagesToSetter first receiver class
+		equals: ScpExampleObjectB.
 	self assert: messagesToSetter first arguments size equals: 1.
-	self assert: messagesToSetter first arguments first equals: 'exampleInBlock'.	
+	self
+		assert: messagesToSetter first arguments first
+		equals: 'exampleInBlock'
 ]
 
 { #category : 'tests' }
 ScpTracesTest >> testExampleSetterCallInBlockInBlock [
 
-	| traces stateUdpates messagesToSetter |
-	traces := ScpTraces new.
- 	traces scan: '
+	| stateUdpates messagesToSetter |
+	traces scan: '
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
 			exampleObjectB: objectB;
 			yourself.		
 		objectA exampleSetterCallInBlockInBlock.
-	'. 
+	'.
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
-	messagesToSetter := traces fetch: (ScpIsMessage new and: (ScpMessageSelectorEq value: #exampleSetter:)).
+	messagesToSetter := traces fetch:
+		                    (ScpIsMessage new and:
+			                     (ScpMessageSelectorEq value: #exampleSetter:)).
 
 	self assert: stateUdpates size equals: 2.
-	self assert: stateUdpates second object class equals: ScpExampleObjectB.
-	self assert: stateUdpates second variable name equals: #exampleInstanceVariable.
-	self assert: stateUdpates second newValue equals: 'exampleInBlock'.
-	
+	self
+		assert: stateUdpates second object class
+		equals: ScpExampleObjectB.
+	self
+		assert: stateUdpates second variable
+		equals: #exampleInstanceVariable.
+	self
+		assert: stateUdpates second newValue
+		equals: 'exampleInBlockInBlock'.
+
 	self assert: messagesToSetter size equals: 1.
-	self assert: messagesToSetter first sender class equals: ScpExampleObjectA.
-	self assert: messagesToSetter first senderSelector equals: #value:.
+	self
+		assert: messagesToSetter first sender class
+		equals: ScpExampleObjectA.
+	self assert: messagesToSetter first senderSelector equals: #exampleSetterCallInBlockInBlock.
 	self assert: messagesToSetter first selector equals: #exampleSetter:.
-	self assert: messagesToSetter first receiver class equals: ScpExampleObjectB.
+	self
+		assert: messagesToSetter first receiver class
+		equals: ScpExampleObjectB.
 	self assert: messagesToSetter first arguments size equals: 1.
-	self assert: messagesToSetter first arguments first equals: 'exampleInBlock'.	
+	self
+		assert: messagesToSetter first arguments first
+		equals: 'exampleInBlockInBlock'
 ]

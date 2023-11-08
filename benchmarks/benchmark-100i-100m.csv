@@ -1,0 +1,3 @@
+"Metrics","Pharo","DAST","DAST with traces","Instrumenter","Instrumenter with traces","Instrumenter installation time"
+"Average","3.6","25681.96","27279.59","33.16","279.94","3904.0"
+"Confidence interval","3.6 ± 0.23191032749750495","25681.96 ± 297.2251135257154","27279.59 ± 311.29249560172565","33.16 ± 1.4729292414776751","279.94 ± 5.22631859174314","3904.0 ± 14.026042657856134"

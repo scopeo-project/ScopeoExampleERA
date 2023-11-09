@@ -2,64 +2,57 @@ Class {
 	#name : 'ScpBenchmark',
 	#superclass : 'Object',
 	#instVars : [
-		'label',
-		'block',
-		'numberOfBlockIterations',
 		'numberOfMeasures',
-		'measures',
-		'result',
-		'inNanoseconds'
+		'measures'
+	],
+	#classInstVars : [
+		'instance'
 	],
 	#category : 'Scopeo-Benchmark',
 	#package : 'Scopeo-Benchmark'
 }
 
-{ #category : 'accessing' }
-ScpBenchmark >> block [
+{ #category : 'running' }
+ScpBenchmark class >> executeCode [
 
-	^ block
+	self instance executeCode
 ]
 
 { #category : 'accessing' }
-ScpBenchmark >> block: anObject [
+ScpBenchmark class >> instance [
 
-	block := anObject
+	^ instance ifNil: [ instance := self new ]
 ]
 
-{ #category : 'initialization' }
-ScpBenchmark >> inNanoseconds [
+{ #category : 'running' }
+ScpBenchmark class >> setUp [
 
-	inNanoseconds := true.
+	self instance setUp
+]
+
+{ #category : 'running' }
+ScpBenchmark class >> tearDown [
+
+	self instance tearDown
+]
+
+{ #category : 'execution' }
+ScpBenchmark >> executeCode [
+
+	self subclassResponsibility
 ]
 
 { #category : 'initialization' }
 ScpBenchmark >> initialize [
 
-	inNanoseconds := false
+	measures := OrderedCollection new.
+	numberOfMeasures := 1.
 ]
 
 { #category : 'accessing' }
-ScpBenchmark >> label [
+ScpBenchmark >> measures [
 
-	^ label
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> label: anObject [
-
-	label := anObject
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> numberOfBlockIterations [
-
-	^ numberOfBlockIterations
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> numberOfBlockIterations: anObject [
-
-	numberOfBlockIterations := anObject
+	^ measures
 ]
 
 { #category : 'accessing' }
@@ -77,18 +70,25 @@ ScpBenchmark >> numberOfMeasures: anObject [
 { #category : 'execution' }
 ScpBenchmark >> perform [
 
-	result := ScpBenchmarkResult new label: label.
-	numberOfMeasures timesRepeat: [
-		| time |
-		time := [ numberOfBlockIterations timesRepeat: block ] timeToRun.
-		inNanoseconds
-			ifTrue: [ result addMeasure: time asNanoSeconds ]
-			ifFalse: [ result addMeasure: time asMilliSeconds ] 
-	]
+	numberOfMeasures timesRepeat: [ measures add: self performOnce ]
 ]
 
-{ #category : 'accessing' }
-ScpBenchmark >> result [
+{ #category : 'execution' }
+ScpBenchmark >> performOnce [
 
-	^ result
+	| result |
+
+	self setUp.
+	result := [ self executeCode ] timeToRun asMilliSeconds.
+	self tearDown.
+
+	^ result.
+]
+
+{ #category : 'execution' }
+ScpBenchmark >> setUp [
+]
+
+{ #category : 'execution' }
+ScpBenchmark >> tearDown [
 ]

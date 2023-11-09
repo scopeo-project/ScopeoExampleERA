@@ -1,5 +1,5 @@
 Class {
-	#name : 'ScopeoInstrumenter',
+	#name : 'ScpInstrumenter',
 	#superclass : 'Object',
 	#instVars : [
 		'sendLink',
@@ -10,61 +10,54 @@ Class {
 		'packages',
 		'traces',
 		'errors',
-		'methodLink'
+		'methodLink',
+		'metaobject'
 	],
 	#category : 'Scopeo-Instrumenter',
 	#package : 'Scopeo-Instrumenter'
 }
 
 { #category : 'environments' }
-ScopeoInstrumenter class >> forPackages: aSet [
+ScpInstrumenter class >> forPackages: aSet [
 
 	^ self new packages: aSet
 ]
 
 { #category : 'metalinks' }
-ScopeoInstrumenter >> assignmentLink [
+ScpInstrumenter >> assignmentLink [
 
 	^ assignmentLink ifNil: [
 		  assignmentLink := MetaLink new.
 		  assignmentLink control: #after.
 		  assignmentLink arguments: #( object name value ).
 		  assignmentLink optionArgsAsArray: true.
-		  assignmentLink metaObject: self.
+		  assignmentLink metaObject: metaobject.
 		  assignmentLink selector: #traceAssignment:.
 		  assignmentLink ]
 ]
 
-{ #category : 'model' }
-ScopeoInstrumenter >> increasePC [
-	 pc := pc + 1
-]
-
 { #category : 'initialization' }
-ScopeoInstrumenter >> initialize [
+ScpInstrumenter >> initialize [
 
 	sendNodes := OrderedCollection new.
 	assignmentNodes := OrderedCollection new.
 	errors := OrderedCollection new.
-
-	pc := 0.
-	self resetTraces
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentAssignments [
+ScpInstrumenter >> instrumentAssignments [
 
 	assignmentNodes do: [ :n | n link: self assignmentLink ]
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentMethods [
+ScpInstrumenter >> instrumentMethods [
 
 	self methodsToInstrument do: [ :m | m ast link: self methodLink ]
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentPackages [
+ScpInstrumenter >> instrumentPackages [
 
 	| methods |
 	methods := self methodsToInstrument.
@@ -83,7 +76,7 @@ ScopeoInstrumenter >> instrumentPackages [
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentSends [
+ScpInstrumenter >> instrumentSends [
 
 	(sendNodes select: [ :n |
 		 n arguments size = 0 or: [
@@ -91,22 +84,28 @@ ScopeoInstrumenter >> instrumentSends [
 		n link: self sendLink ]
 ]
 
+{ #category : 'as yet unclassified' }
+ScpInstrumenter >> metaobject: aMetaObject [
+
+	metaobject := aMetaObject
+]
+
 { #category : 'metalinks' }
-ScopeoInstrumenter >> methodLink [
+ScpInstrumenter >> methodLink [
 
 	^ methodLink ifNil: [
 		  methodLink := MetaLink new.
 		  methodLink control: #before.
-		  methodLink arguments: #(selector receiver arguments ).
+		  methodLink arguments: #( selector receiver arguments ).
 		  methodLink optionArgsAsArray: true.
 		  methodLink optionCompileOnLinkInstallation: true.
-		  methodLink metaObject: self.
+		  methodLink metaObject: metaobject.
 		  methodLink selector: #traceMethod:.
 		  ^ methodLink ]
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> methodsToInstrument [
+ScpInstrumenter >> methodsToInstrument [
 
 	| classes |
 	classes := packages flatCollect: [ :p | p classes ].
@@ -117,20 +116,13 @@ ScopeoInstrumenter >> methodsToInstrument [
 ]
 
 { #category : 'accessing' }
-ScopeoInstrumenter >> packages: anObject [
+ScpInstrumenter >> packages: anObject [
 
 	packages := anObject
 ]
 
-{ #category : 'initialization' }
-ScopeoInstrumenter >> resetTraces [
-
-
-	traces := Array new: 100000.
-]
-
 { #category : 'metalinks' }
-ScopeoInstrumenter >> sendLink [
+ScpInstrumenter >> sendLink [
 
 	^ sendLink ifNil: [
 		  sendLink := MetaLink new.
@@ -138,59 +130,13 @@ ScopeoInstrumenter >> sendLink [
 		  sendLink arguments: #( object selector method ).
 		  sendLink optionArgsAsArray: true.
 		  sendLink optionCompileOnLinkInstallation: true.
-		  sendLink metaObject: self.
+		  sendLink metaObject: metaobject.
 		  sendLink selector: #traceSend:.
 		  ^ sendLink ]
 ]
 
-{ #category : 'tracing' }
-ScopeoInstrumenter >> traceAssignment: anArray [
-	
-	"data is exposed here:
-		- receiver
-		- variable name
-		- variable value
-	Store it in your model."
-	pc := pc + 1.
-	traces atWrap: pc put: #assignment.
-	pc := pc + 1.
-	traces atWrap: pc put: anArray 
-	
-]
-
-{ #category : 'tracing' }
-ScopeoInstrumenter >> traceMethod: anArray [
-	"The following data is exposed here.
-	Store it in your model.	
-	receiver.
-	arguments"
-	pc := pc + 1.
-	traces atWrap: pc put: #invoke.
-	pc := pc + 1.
-	traces atWrap: pc put: anArray 
-]
-
-{ #category : 'tracing' }
-ScopeoInstrumenter >> traceSend: anArray [
-	"The following data is exposed here.
-	Store it in your model.	
-	ctx selector.
-	ctx sender receiver.
-	ctx sender selector"
-	pc := pc + 1.
-	traces atWrap: pc put: #send.
-	pc := pc + 1.
-	traces atWrap: pc put: anArray 
-
-]
-
-{ #category : 'accessing' }
-ScopeoInstrumenter >> traces [
-	^traces ifNil: [ traces := OrderedCollection new ]
-]
-
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> uninstall [
+ScpInstrumenter >> uninstall [
 
 	sendLink uninstall.
 	assignmentLink uninstall.

@@ -53,16 +53,6 @@ ScpTraces >> forPackages: aPackageNameCollection [
 	tracer forPackages: aPackageNameCollection
 ]
 
-{ #category : 'initialization' }
-ScpTraces >> initialize [
-
-	self tracer: ScpTracingInterpreter new.
-	self traceStorage: ScpTraceMemoryStorage new.
-	
-	self forPackages: OrderedCollection new.
-	
-]
-
 { #category : 'parameters' }
 ScpTraces >> rejectClasses: aClassNameCollection [
 
@@ -79,7 +69,7 @@ ScpTraces >> rejectPackages: aPackageNameCollection [
 ScpTraces >> scan: aProgram [
 
 	storage clear.
-	^ tracer traceExpressionString: aProgram
+	^ tracer traceBlock: aProgram
 ]
 
 { #category : 'parameters' }

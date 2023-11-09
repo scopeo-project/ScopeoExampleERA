@@ -2,13 +2,9 @@ Class {
 	#name : 'ScpInstrumenterTracer',
 	#superclass : 'Object',
 	#instVars : [
-		'traces',
-		'stack',
 		'sender',
 		'storage',
-		'instrumenter',
-		'installed',
-		'anExpressionString'
+		'instrumenter'
 	],
 	#category : 'Scopeo-Instrumenter-',
 	#package : 'Scopeo-Instrumenter',

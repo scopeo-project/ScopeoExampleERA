@@ -1,9 +1,8 @@
 Class {
 	#name : 'ScpMessageSenderClassEq',
 	#superclass : 'ScpUnaryPredicate',
-	#category : 'Scopeo-Predicates-',
-	#package : 'Scopeo-Predicates',
-	#tag : ''
+	#category : 'Scopeo-Predicates',
+	#package : 'Scopeo-Predicates'
 }
 
 { #category : 'verifying' }

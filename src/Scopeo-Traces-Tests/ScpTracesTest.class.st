@@ -4,9 +4,8 @@ Class {
 	#instVars : [
 		'traces'
 	],
-	#category : 'Scopeo-Traces-Tests-',
-	#package : 'Scopeo-Traces-Tests',
-	#tag : ''
+	#category : 'Scopeo-Traces-Tests',
+	#package : 'Scopeo-Traces-Tests'
 }
 
 { #category : 'running' }

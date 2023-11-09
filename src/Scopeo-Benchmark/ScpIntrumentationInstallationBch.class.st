@@ -1,9 +1,8 @@
 Class {
 	#name : 'ScpIntrumentationInstallationBch',
 	#superclass : 'ScpSanerBenchmark',
-	#category : 'Scopeo-Benchmark-',
-	#package : 'Scopeo-Benchmark',
-	#tag : ''
+	#category : 'Scopeo-Benchmark',
+	#package : 'Scopeo-Benchmark'
 }
 
 { #category : 'execution' }

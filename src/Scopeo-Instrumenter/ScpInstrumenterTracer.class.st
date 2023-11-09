@@ -6,9 +6,8 @@ Class {
 		'storage',
 		'instrumenter'
 	],
-	#category : 'Scopeo-Instrumenter-',
-	#package : 'Scopeo-Instrumenter',
-	#tag : ''
+	#category : 'Scopeo-Instrumenter',
+	#package : 'Scopeo-Instrumenter'
 }
 
 { #category : 'services' }

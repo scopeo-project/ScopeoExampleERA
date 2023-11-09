@@ -7,9 +7,8 @@ Class {
 	#classInstVars : [
 		'instance'
 	],
-	#category : 'Scopeo-Benchmark-',
-	#package : 'Scopeo-Benchmark',
-	#tag : ''
+	#category : 'Scopeo-Benchmark',
+	#package : 'Scopeo-Benchmark'
 }
 
 { #category : 'accessing' }
@@ -41,4 +40,11 @@ ScpRebench >> register: aBenchmarkClass [
 
 	self benchmark: aBenchmarkClass new.
 	self benchmark setUp.
+]
+
+{ #category : 'initialization' }
+ScpRebench >> reset [
+
+	benchmark tearDown.
+	benchmark := nil
 ]

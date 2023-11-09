@@ -10,6 +10,11 @@ BaselineOfScopeoExampleERA >> baseline: spec [
 
 	<baseline>
 	spec for: #common do: [
+		
+		spec baseline: 'AmmoliteMagenta' with: [
+			spec repository:
+				'github://StevenCostiou/AmmoliteMagenta:failing-test-example' ].
+		
 		spec package: #'Scopeo-Predicates'.
 		spec package: #'Scopeo-Instrumenter'.
 		

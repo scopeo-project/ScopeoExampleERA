@@ -1,24 +1,26 @@
 Class {
-	#name : #ScpTracesTest,
-	#superclass : #TestCase,
+	#name : 'ScpTracesTest',
+	#superclass : 'TestCase',
 	#instVars : [
 		'traces'
 	],
-	#category : #'Scopeo-Traces-Tests-'
+	#category : 'Scopeo-Traces-Tests-',
+	#package : 'Scopeo-Traces-Tests',
+	#tag : ''
 }
 
-{ #category : #running }
+{ #category : 'running' }
 ScpTracesTest >> setUp [
 
 	super setUp.
-
-	traces := ScpTraces new.
-	traces tracer: ScpTracingInterpreter new.
-	"traces tracer: ScopeoInstrumenterTracer new."
-	traces forPackages: { ScpExampleObjectA package name }
+	traces := ScpTraces new
+		tracer: ScpInstrumenterTracer new;
+		traceStorage: ScpTraceMemoryStorage new;
+		forPackages: { ScpExampleObjectA package name };
+		yourself.
 ]
 
-{ #category : #running }
+{ #category : 'running' }
 ScpTracesTest >> tearDown [
 
 	super tearDown.
@@ -26,18 +28,18 @@ ScpTracesTest >> tearDown [
 	traces clean
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ScpTracesTest >> testExampleAccessorCall [
 
 	| stateUdpates messagesToAccessor |
-	traces scan: '
+	traces scan: [
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
 			exampleObjectB: objectB;
 			yourself.		
 		objectA exampleAccessorCall.
-	'.
+	].
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
 	messagesToAccessor := traces fetch: (ScpIsMessage new and: (ScpMessageSelectorEq value: #exampleAccessor)).
@@ -52,17 +54,17 @@ ScpTracesTest >> testExampleAccessorCall [
 	self assert: messagesToAccessor first arguments size equals: 0.
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ScpTracesTest >> testExampleInit [
 
 	| stateUdpates |
-	traces scan: '
+	traces scan: [
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
 			exampleObjectB: objectB;
 			yourself.
-	'.
+	].
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
 
@@ -76,18 +78,18 @@ ScpTracesTest >> testExampleInit [
 		equals: ScpExampleObjectB
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ScpTracesTest >> testExampleSetterCall [
 
 	| stateUdpates messagesToSetter |
-	traces scan: '
+	traces scan: [
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
 			exampleObjectB: objectB;
 			yourself.		
 		objectA exampleSetterCall.
-	'.
+	].
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
 	messagesToSetter := traces fetch:
@@ -118,18 +120,18 @@ ScpTracesTest >> testExampleSetterCall [
 	self assert: messagesToSetter first arguments first equals: 'example'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ScpTracesTest >> testExampleSetterCallInBlock [
 
 	| stateUdpates messagesToSetter |
-	traces scan: '
+	traces scan: [
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
 			exampleObjectB: objectB;
 			yourself.		
 		objectA exampleSetterCallInBlock.
-	'.
+	].
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
 	messagesToSetter := traces fetch:
@@ -162,18 +164,18 @@ ScpTracesTest >> testExampleSetterCallInBlock [
 		equals: 'exampleInBlock'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 ScpTracesTest >> testExampleSetterCallInBlockInBlock [
 
 	| stateUdpates messagesToSetter |
-	traces scan: '
+	traces scan: [
 		|objectA objectB|
 		objectB := ScpExampleObjectB new.
 		objectA := ScpExampleObjectA new
 			exampleObjectB: objectB;
 			yourself.		
 		objectA exampleSetterCallInBlockInBlock.
-	'.
+	].
 
 	stateUdpates := traces fetch: ScpIsStateUpdate new.
 	messagesToSetter := traces fetch:

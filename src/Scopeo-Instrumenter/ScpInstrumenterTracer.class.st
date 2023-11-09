@@ -1,5 +1,5 @@
 Class {
-	#name : 'ScopeoInstrumenterTracer',
+	#name : 'ScpInstrumenterTracer',
 	#superclass : 'Object',
 	#instVars : [
 		'traces',
@@ -7,7 +7,8 @@ Class {
 		'sender',
 		'storage',
 		'instrumenter',
-		'installed'
+		'installed',
+		'anExpressionString'
 	],
 	#category : 'Scopeo-Instrumenter-',
 	#package : 'Scopeo-Instrumenter',
@@ -15,13 +16,13 @@ Class {
 }
 
 { #category : 'services' }
-ScopeoInstrumenterTracer >> clean [
+ScpInstrumenterTracer >> clean [
 
 	instrumenter uninstall
 ]
 
 { #category : 'parameters' }
-ScopeoInstrumenterTracer >> forPackages: aPackageNameCollection [
+ScpInstrumenterTracer >> forPackages: aPackageNameCollection [
 
 	instrumenter packages: (aPackageNameCollection collect: [ :c | c asPackage ]).
 	MetaLink uninstallAll.
@@ -29,16 +30,16 @@ ScopeoInstrumenterTracer >> forPackages: aPackageNameCollection [
 ]
 
 { #category : 'initialization' }
-ScopeoInstrumenterTracer >> initialize [
+ScpInstrumenterTracer >> initialize [
 
 	sender := #( nil nil nil ).
-	instrumenter := ScopeoInstrumenter new
+	instrumenter := ScpInstrumenter new
 		                metaobject: self;
 		                yourself
 ]
 
 { #category : 'tracing' }
-ScopeoInstrumenterTracer >> traceAssignment: anArray [
+ScpInstrumenterTracer >> traceAssignment: anArray [
 
 	storage addStateUpdate: (ScpStateUpdate new
 			 object: anArray first;
@@ -48,13 +49,13 @@ ScopeoInstrumenterTracer >> traceAssignment: anArray [
 ]
 
 { #category : 'services' }
-ScopeoInstrumenterTracer >> traceExpressionString: anExpressionString [
+ScpInstrumenterTracer >> traceBlock: aBlock [
 
-	^ self class compiler evaluate: anExpressionString
+	^ aBlock value
 ]
 
 { #category : 'tracing' }
-ScopeoInstrumenterTracer >> traceMethod: anArray [
+ScpInstrumenterTracer >> traceMethod: anArray [
 
 
 	storage addMessage: (ScpMessage new
@@ -67,13 +68,13 @@ ScopeoInstrumenterTracer >> traceMethod: anArray [
 ]
 
 { #category : 'tracing' }
-ScopeoInstrumenterTracer >> traceSend: anArray [
+ScpInstrumenterTracer >> traceSend: anArray [
 
 	sender := anArray
 ]
 
 { #category : 'parameters' }
-ScopeoInstrumenterTracer >> traceStorage: aStorage [
+ScpInstrumenterTracer >> traceStorage: aStorage [
 
 	storage := aStorage
 ]

@@ -1,5 +1,5 @@
 Class {
-	#name : 'ScopeoInstrumenter',
+	#name : 'ScpInstrumenter',
 	#superclass : 'Object',
 	#instVars : [
 		'sendLink',
@@ -18,13 +18,13 @@ Class {
 }
 
 { #category : 'environments' }
-ScopeoInstrumenter class >> forPackages: aSet [
+ScpInstrumenter class >> forPackages: aSet [
 
 	^ self new packages: aSet
 ]
 
 { #category : 'metalinks' }
-ScopeoInstrumenter >> assignmentLink [
+ScpInstrumenter >> assignmentLink [
 
 	^ assignmentLink ifNil: [
 		  assignmentLink := MetaLink new.
@@ -37,7 +37,7 @@ ScopeoInstrumenter >> assignmentLink [
 ]
 
 { #category : 'initialization' }
-ScopeoInstrumenter >> initialize [
+ScpInstrumenter >> initialize [
 
 	sendNodes := OrderedCollection new.
 	assignmentNodes := OrderedCollection new.
@@ -45,19 +45,19 @@ ScopeoInstrumenter >> initialize [
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentAssignments [
+ScpInstrumenter >> instrumentAssignments [
 
 	assignmentNodes do: [ :n | n link: self assignmentLink ]
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentMethods [
+ScpInstrumenter >> instrumentMethods [
 
 	self methodsToInstrument do: [ :m | m ast link: self methodLink ]
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentPackages [
+ScpInstrumenter >> instrumentPackages [
 
 	| methods |
 	methods := self methodsToInstrument.
@@ -76,7 +76,7 @@ ScopeoInstrumenter >> instrumentPackages [
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> instrumentSends [
+ScpInstrumenter >> instrumentSends [
 
 	(sendNodes select: [ :n |
 		 n arguments size = 0 or: [
@@ -85,13 +85,13 @@ ScopeoInstrumenter >> instrumentSends [
 ]
 
 { #category : 'as yet unclassified' }
-ScopeoInstrumenter >> metaobject: aMetaObject [
+ScpInstrumenter >> metaobject: aMetaObject [
 
 	metaobject := aMetaObject
 ]
 
 { #category : 'metalinks' }
-ScopeoInstrumenter >> methodLink [
+ScpInstrumenter >> methodLink [
 
 	^ methodLink ifNil: [
 		  methodLink := MetaLink new.
@@ -105,7 +105,7 @@ ScopeoInstrumenter >> methodLink [
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> methodsToInstrument [
+ScpInstrumenter >> methodsToInstrument [
 
 	| classes |
 	classes := packages flatCollect: [ :p | p classes ].
@@ -116,13 +116,13 @@ ScopeoInstrumenter >> methodsToInstrument [
 ]
 
 { #category : 'accessing' }
-ScopeoInstrumenter >> packages: anObject [
+ScpInstrumenter >> packages: anObject [
 
 	packages := anObject
 ]
 
 { #category : 'metalinks' }
-ScopeoInstrumenter >> sendLink [
+ScpInstrumenter >> sendLink [
 
 	^ sendLink ifNil: [
 		  sendLink := MetaLink new.
@@ -136,7 +136,7 @@ ScopeoInstrumenter >> sendLink [
 ]
 
 { #category : 'instrumentation' }
-ScopeoInstrumenter >> uninstall [
+ScpInstrumenter >> uninstall [
 
 	sendLink uninstall.
 	assignmentLink uninstall.

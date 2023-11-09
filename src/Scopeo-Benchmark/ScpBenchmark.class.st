@@ -2,52 +2,32 @@ Class {
 	#name : 'ScpBenchmark',
 	#superclass : 'Object',
 	#instVars : [
-		'label',
-		'block',
 		'numberOfBlockIterations',
 		'numberOfMeasures',
-		'measures',
-		'result',
-		'inNanoseconds'
+		'measures'
 	],
 	#category : 'Scopeo-Benchmark',
 	#package : 'Scopeo-Benchmark'
 }
 
-{ #category : 'accessing' }
-ScpBenchmark >> block [
+{ #category : 'execution' }
+ScpBenchmark >> executeCode [
 
-	^ block
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> block: anObject [
-
-	block := anObject
-]
-
-{ #category : 'initialization' }
-ScpBenchmark >> inNanoseconds [
-
-	inNanoseconds := true.
+	self subclassResponsibility
 ]
 
 { #category : 'initialization' }
 ScpBenchmark >> initialize [
 
-	inNanoseconds := false
+	measures := OrderedCollection new.
+	numberOfBlockIterations := 1.
+	numberOfMeasures := 1.
 ]
 
 { #category : 'accessing' }
-ScpBenchmark >> label [
+ScpBenchmark >> measures [
 
-	^ label
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> label: anObject [
-
-	label := anObject
+	^ measures
 ]
 
 { #category : 'accessing' }
@@ -77,18 +57,25 @@ ScpBenchmark >> numberOfMeasures: anObject [
 { #category : 'execution' }
 ScpBenchmark >> perform [
 
-	result := ScpBenchmarkResult new label: label.
-	numberOfMeasures timesRepeat: [
-		| time |
-		time := [ numberOfBlockIterations timesRepeat: block ] timeToRun.
-		inNanoseconds
-			ifTrue: [ result addMeasure: time asNanoSeconds ]
-			ifFalse: [ result addMeasure: time asMilliSeconds ] 
-	]
+	numberOfMeasures timesRepeat: [ measures add: self performOnce ]
 ]
 
-{ #category : 'accessing' }
-ScpBenchmark >> result [
+{ #category : 'execution' }
+ScpBenchmark >> performOnce [
 
-	^ result
+	| result |
+
+	self setUp.
+	result := [ numberOfBlockIterations timesRepeat: [ self executeCode ] ] timeToRun asMilliSeconds.
+	self tearDown.
+
+	^ result.
+]
+
+{ #category : 'execution' }
+ScpBenchmark >> setUp [
+]
+
+{ #category : 'execution' }
+ScpBenchmark >> tearDown [
 ]

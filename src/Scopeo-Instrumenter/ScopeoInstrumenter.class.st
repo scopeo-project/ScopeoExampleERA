@@ -10,7 +10,8 @@ Class {
 		'packages',
 		'traces',
 		'errors',
-		'methodLink'
+		'methodLink',
+		'metaobject'
 	],
 	#category : 'Scopeo-Instrumenter',
 	#package : 'Scopeo-Instrumenter'
@@ -30,14 +31,9 @@ ScopeoInstrumenter >> assignmentLink [
 		  assignmentLink control: #after.
 		  assignmentLink arguments: #( object name value ).
 		  assignmentLink optionArgsAsArray: true.
-		  assignmentLink metaObject: self.
+		  assignmentLink metaObject: metaobject.
 		  assignmentLink selector: #traceAssignment:.
 		  assignmentLink ]
-]
-
-{ #category : 'model' }
-ScopeoInstrumenter >> increasePC [
-	 pc := pc + 1
 ]
 
 { #category : 'initialization' }
@@ -46,9 +42,6 @@ ScopeoInstrumenter >> initialize [
 	sendNodes := OrderedCollection new.
 	assignmentNodes := OrderedCollection new.
 	errors := OrderedCollection new.
-
-	pc := 0.
-	self resetTraces
 ]
 
 { #category : 'instrumentation' }
@@ -91,16 +84,22 @@ ScopeoInstrumenter >> instrumentSends [
 		n link: self sendLink ]
 ]
 
+{ #category : 'as yet unclassified' }
+ScopeoInstrumenter >> metaobject: aMetaObject [
+
+	metaobject := aMetaObject
+]
+
 { #category : 'metalinks' }
 ScopeoInstrumenter >> methodLink [
 
 	^ methodLink ifNil: [
 		  methodLink := MetaLink new.
 		  methodLink control: #before.
-		  methodLink arguments: #(selector receiver arguments ).
+		  methodLink arguments: #( selector receiver arguments ).
 		  methodLink optionArgsAsArray: true.
 		  methodLink optionCompileOnLinkInstallation: true.
-		  methodLink metaObject: self.
+		  methodLink metaObject: metaobject.
 		  methodLink selector: #traceMethod:.
 		  ^ methodLink ]
 ]
@@ -122,13 +121,6 @@ ScopeoInstrumenter >> packages: anObject [
 	packages := anObject
 ]
 
-{ #category : 'initialization' }
-ScopeoInstrumenter >> resetTraces [
-
-
-	traces := Array new: 100000.
-]
-
 { #category : 'metalinks' }
 ScopeoInstrumenter >> sendLink [
 
@@ -138,55 +130,9 @@ ScopeoInstrumenter >> sendLink [
 		  sendLink arguments: #( object selector method ).
 		  sendLink optionArgsAsArray: true.
 		  sendLink optionCompileOnLinkInstallation: true.
-		  sendLink metaObject: self.
+		  sendLink metaObject: metaobject.
 		  sendLink selector: #traceSend:.
 		  ^ sendLink ]
-]
-
-{ #category : 'tracing' }
-ScopeoInstrumenter >> traceAssignment: anArray [
-	
-	"data is exposed here:
-		- receiver
-		- variable name
-		- variable value
-	Store it in your model."
-	pc := pc + 1.
-	traces atWrap: pc put: #assignment.
-	pc := pc + 1.
-	traces atWrap: pc put: anArray 
-	
-]
-
-{ #category : 'tracing' }
-ScopeoInstrumenter >> traceMethod: anArray [
-	"The following data is exposed here.
-	Store it in your model.	
-	receiver.
-	arguments"
-	pc := pc + 1.
-	traces atWrap: pc put: #invoke.
-	pc := pc + 1.
-	traces atWrap: pc put: anArray 
-]
-
-{ #category : 'tracing' }
-ScopeoInstrumenter >> traceSend: anArray [
-	"The following data is exposed here.
-	Store it in your model.	
-	ctx selector.
-	ctx sender receiver.
-	ctx sender selector"
-	pc := pc + 1.
-	traces atWrap: pc put: #send.
-	pc := pc + 1.
-	traces atWrap: pc put: anArray 
-
-]
-
-{ #category : 'accessing' }
-ScopeoInstrumenter >> traces [
-	^traces ifNil: [ traces := OrderedCollection new ]
 ]
 
 { #category : 'instrumentation' }

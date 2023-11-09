@@ -14,28 +14,6 @@ Class {
 	#tag : ''
 }
 
-{ #category : 'private' }
-ScopeoInstrumenterTracer >> addMessage: anInvokeTrace [
-
-	storage addMessage: (ScpMessage new
-			 sender: sender first;
-			 senderSelector: (sender third ifNotNil: [ :s | s selector ]);
-			 selector: anInvokeTrace first;
-			 receiver: anInvokeTrace second;
-			 arguments: anInvokeTrace third;
-			 yourself)
-]
-
-{ #category : 'private' }
-ScopeoInstrumenterTracer >> addStateUpdate: anInvokeTrace [
-
-	storage addStateUpdate: (ScpStateUpdate new
-			 object: anInvokeTrace first;
-			 variable: anInvokeTrace second;
-			 newValue: anInvokeTrace third;
-			 yourself) 
-]
-
 { #category : 'services' }
 ScopeoInstrumenterTracer >> clean [
 
@@ -54,32 +32,44 @@ ScopeoInstrumenterTracer >> forPackages: aPackageNameCollection [
 ScopeoInstrumenterTracer >> initialize [
 
 	sender := #( nil nil nil ).
-	traces := OrderedCollection new.
 	instrumenter := ScopeoInstrumenter new
+		                metaobject: self;
+		                yourself
 ]
 
-{ #category : 'private' }
-ScopeoInstrumenterTracer >> read: anInterpreterTraces [
+{ #category : 'tracing' }
+ScopeoInstrumenterTracer >> traceAssignment: anArray [
 
-	| action |
-	anInterpreterTraces do: [ :t |
-		t ifNil: [ ^ self ].
-		(#( invoke assignment send ) includes: t)
-			ifTrue: [ action := t ]
-			ifFalse: [
-				action = #invoke ifTrue: [ self addMessage: t ].
-				action = #assignment ifTrue: [ self addStateUpdate: t ].
-				action = #send ifTrue: [ sender := t ] ] ]
+	storage addStateUpdate: (ScpStateUpdate new
+			 object: anArray first;
+			 variable: anArray second;
+			 newValue: anArray third;
+			 yourself)
 ]
 
 { #category : 'services' }
 ScopeoInstrumenterTracer >> traceExpressionString: anExpressionString [
 
-	| result |
-	result := self class compiler evaluate: anExpressionString.
-	self read: instrumenter traces.
-	instrumenter resetTraces.
-	^ result
+	^ self class compiler evaluate: anExpressionString
+]
+
+{ #category : 'tracing' }
+ScopeoInstrumenterTracer >> traceMethod: anArray [
+
+
+	storage addMessage: (ScpMessage new
+			 sender: sender first;
+			 senderSelector: (sender third ifNotNil: [ :s | s selector ]);
+			 selector: anArray first;
+			 receiver: anArray second;
+			 arguments: anArray third;
+			 yourself)
+]
+
+{ #category : 'tracing' }
+ScopeoInstrumenterTracer >> traceSend: anArray [
+
+	sender := anArray
 ]
 
 { #category : 'parameters' }

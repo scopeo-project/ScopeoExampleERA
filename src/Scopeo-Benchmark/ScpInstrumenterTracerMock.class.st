@@ -1,9 +1,8 @@
 Class {
 	#name : 'ScpInstrumenterTracerMock',
 	#superclass : 'ScpInstrumenterTracer',
-	#category : 'Scopeo-Instrumenter-',
-	#package : 'Scopeo-Instrumenter',
-	#tag : ''
+	#category : 'Scopeo-Benchmark',
+	#package : 'Scopeo-Benchmark'
 }
 
 { #category : 'tracing' }

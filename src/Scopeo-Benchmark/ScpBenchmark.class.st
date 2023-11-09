@@ -5,36 +5,9 @@ Class {
 		'numberOfMeasures',
 		'measures'
 	],
-	#classInstVars : [
-		'instance'
-	],
 	#category : 'Scopeo-Benchmark',
 	#package : 'Scopeo-Benchmark'
 }
-
-{ #category : 'running' }
-ScpBenchmark class >> executeCode [
-
-	self instance executeCode
-]
-
-{ #category : 'accessing' }
-ScpBenchmark class >> instance [
-
-	^ instance ifNil: [ instance := self new ]
-]
-
-{ #category : 'running' }
-ScpBenchmark class >> setUp [
-
-	self instance setUp
-]
-
-{ #category : 'running' }
-ScpBenchmark class >> tearDown [
-
-	self instance tearDown
-]
 
 { #category : 'execution' }
 ScpBenchmark >> executeCode [

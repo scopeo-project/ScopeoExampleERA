@@ -1,6 +1,6 @@
 Class {
 	#name : 'ScpInstrumentedCodeBch',
-	#superclass : 'ScpInstrumentationBenchmark',
+	#superclass : 'ScpSanerBenchmark',
 	#category : 'Scopeo-Benchmark-',
 	#package : 'Scopeo-Benchmark',
 	#tag : ''

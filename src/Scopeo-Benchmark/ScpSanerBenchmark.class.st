@@ -1,5 +1,5 @@
 Class {
-	#name : 'ScpInstrumentationBenchmark',
+	#name : 'ScpSanerBenchmark',
 	#superclass : 'ScpBenchmark',
 	#instVars : [
 		'traces',
@@ -11,19 +11,19 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ScpInstrumentationBenchmark >> executeCode [
+ScpSanerBenchmark >> executeCode [
 
 	traces scan: [ 1000 timesRepeat: [ testSuites do: [ :s | s run ] ] ]
 ]
 
 { #category : 'as yet unclassified' }
-ScpInstrumentationBenchmark >> setUp [
+ScpSanerBenchmark >> setUp [
 
 	testSuites := 'AmmoliteMagenta-Tests' asPackage classes collect:[:c| c buildSuite].
 ]
 
 { #category : 'execution' }
-ScpInstrumentationBenchmark >> tearDown [
+ScpSanerBenchmark >> tearDown [
 
 	traces clean
 ]

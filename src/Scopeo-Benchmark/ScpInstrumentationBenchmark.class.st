@@ -13,14 +13,7 @@ Class {
 { #category : 'as yet unclassified' }
 ScpInstrumentationBenchmark >> executeCode [
 
-	traces scan: [ testSuites do: [ :s | s run ] ]
-]
-
-{ #category : 'initialization' }
-ScpInstrumentationBenchmark >> initialize [
-
-	numberOfBlockIterations := 100.
-	numberOfMeasures := 1
+	traces scan: [ 1000 timesRepeat: [ testSuites do: [ :s | s run ] ] ]
 ]
 
 { #category : 'as yet unclassified' }

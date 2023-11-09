@@ -14,9 +14,3 @@ ScpIntrumentationInstallationBch >> executeCode [
 		forPackages: #( 'AmmoliteMagenta' 'AmmoliteMagenta-Tests' );
 		yourself.
 ]
-
-{ #category : 'initialization' }
-ScpIntrumentationInstallationBch >> initialize [
-
-	numberOfBlockIterations := 1
-]

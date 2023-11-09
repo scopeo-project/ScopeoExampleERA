@@ -2,7 +2,6 @@ Class {
 	#name : 'ScpBenchmark',
 	#superclass : 'Object',
 	#instVars : [
-		'numberOfBlockIterations',
 		'numberOfMeasures',
 		'measures'
 	],
@@ -47,7 +46,6 @@ ScpBenchmark >> executeCode [
 ScpBenchmark >> initialize [
 
 	measures := OrderedCollection new.
-	numberOfBlockIterations := 1.
 	numberOfMeasures := 1.
 ]
 
@@ -55,18 +53,6 @@ ScpBenchmark >> initialize [
 ScpBenchmark >> measures [
 
 	^ measures
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> numberOfBlockIterations [
-
-	^ numberOfBlockIterations
-]
-
-{ #category : 'accessing' }
-ScpBenchmark >> numberOfBlockIterations: anObject [
-
-	numberOfBlockIterations := anObject
 ]
 
 { #category : 'accessing' }
@@ -93,7 +79,7 @@ ScpBenchmark >> performOnce [
 	| result |
 
 	self setUp.
-	result := [ numberOfBlockIterations timesRepeat: [ self executeCode ] ] timeToRun asMilliSeconds.
+	result := [ self executeCode ] timeToRun asMilliSeconds.
 	self tearDown.
 
 	^ result.

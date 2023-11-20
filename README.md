@@ -4,8 +4,6 @@ Table of contents:
 - [ScopeoExampleERA](#scopeoexampleera)
 	- [Introduction](#introduction)
 	- [Scopeo's predicates](#scopeos-predicates)
-		- [Scopeo initial version's predicates](#scopeo-initial-versions-predicates)
-		- [Scopeo in-progress version's predicates](#scopeo-in-progress-versions-predicates)
 	- [GUI example of Scopeo usage](#gui-example-of-scopeo-usage)
 		- [Scenario, the Grapevine Game](#scenario-the-grapevine-game)
 	- [Script example of Scopeo usage](#script-example-of-scopeo-usage)
@@ -15,54 +13,40 @@ Table of contents:
 
 This document presents two examples of how to use Scopeo, an omniscient debugger that records execution data and provide a list of predicates in combination with an exploration scope to explore this data.
 
-This first example has been written with a prior version of Scopeo relying on [Seeker](https://github.com/maxwills/SeekerDebugger) as a backend for collecting the execution information.
-The following picture is a screenshot of Scopeo's UI at that time.  
+The following screenshot presents Scopeo's UI.
 ![Scopeo's GUI](resources/scopeo-screenshot-new.png)
 
-Since Scopeo is a work-on-progress, we updated it for the need of our research.  
-The UI is not anymore avalaible in the project, we plan to add it back for our future demonstrations.
-However, the second example shows how to use Scopeo as a scriptable debugger.
-
-We also detail the list of predicates available in the two versions of Scopeo.
+We detail the list of predicates available in Scopeo.
+In a first debugging example we show how Scopeo works using [Seeker](https://github.com/maxwills/SeekerDebugger) a time-travel debugger as backend for collecting information during the live execution of the program.
+In a second example, we show how to use Scopeo as a back-in-time scriptable debugger, to collect and analyse the execution information after its termination *i.e.* post-mortem.
 
 ## Scopeo's predicates
 
 In both versions the list of predicates is extendable.  
 In our future research, we plan to study questions developers ask while debugging to define the minimal list of predicates required to cover these questions.
 
-### Scopeo initial version's predicates
+| **Predicate name**       | **Condition keyword** | **Condition parameter**                            | **Description**                                                                           |
+|--------------------------|-----------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------|
+| IsMessage                | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to a message send.                                    |
+| IsStateUpdate            | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to state updates.                                     |
+| Type                     | of:                   | a class object                                     | Selects the objects events refering to a given class instances and no other types.        |
+| WithType                 | of:                   | a class object                                     | Selects the objects events refering to at least one instance of the a given class.        |
+| Result                   | number:               | an array of integers                               | Selects rows in the list of the query results, depending on the given row numbers.        |
+| Going                    | to:                   | a string from the exploration scope *e.g.* 'label' | Selects an object's incoming interactions.                                                |
+| Coming                   | from:                 | a string from the exploration scope *e.g.* 'label' | Selects an object's outgoing interactions.                                                |
+| OccuredBefore            | event:                | a string from the exploration scope *e.g.* 'label' | Selects the objects events occuring before another object event in the execution history. |
+| OccuredAfter             | event:                | a string from the exploration scope *e.g.* 'label' | Selects the objects events occuring after another object event in the execution history.  |
+| Limit                    | number:               | integer                                            | Selects the first results of the query depending on a given number.                       |
+| AssignmentNewValueEq     | value:                | an object                                          | Selects the assignments of the value given in parameter.                                  |
+| AssignmentObjectEq       | value:                | an object                                          | Selects the assignments to an instance variable of the object passed in parameter.        |
+| AssignmentOldValueEq     | value:                | an object                                          | Selects the assignments to an instance variable containing the value passed in parameter. |
+| AssignmentVariableNameEq | value:                | a string                                           | Selects the assignments to an instance variable named as defined in parameter.            |
+| MessageArgumentsContains | value:                | an array of values (objects)                       | Selects the messages containing in the arguments the objects passed in parameter.         |
+| MessageReceiverEq        | value:                | an object                                          | Selects the messages to the object passed in parameter.                                   |
+| MessageSelectorEq        | value:                | a symbol representing the selector                 | Selects the messages using the selector given in parameter.                               |
+| MessageSenderClassEq     | value:                | a class object                                     | Selects the messages sent by an object of the class given in parameter.                   |
+| MessageSenderEq          | value:                | an object                                          | Selects the messages sent by the object passed in parameter.                              |
 
-|    | **Predicate name** | **Condition keyword** | **Condition parameter**                            | **Description**                                                                                  |
-|----|--------------------|-----------------------|----------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| 1  | IsInteraction      | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to interactions.                                             |
-| 2  | IsStateAccess      | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to state accesses.                                           |
-| 3  | IsStateUpdate      | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to state updates.                                            |
-| 4  | Type               | of:                   | a class object                                     | Selects the objects events refering to a given class instances and no other types.               |
-| 5  | WithType           | of:                   | a class object                                     | Selects the objects events refering to at least one instance of the a given class.               |
-| 6  | Result             | number:               | an array of integers                               | Selects rows in the list of the query results, depending on the given row numbers.               |
-| 7  | Going              | to:                   | a string from the exploration scope *e.g.* 'label' | Selects an object's incoming interactions.                                                       |
-| 8  | Coming             | from:                 | a string from the exploration scope *e.g.* 'label' | Selects an object's outgoing interactions.                                                       |
-| 9  | OccuredBefore      | event:                | a string from the exploration scope *e.g.* 'label' | Selects the objects events occuring before another object event in the execution history.        |
-| 10 | OccuredAfter       | event:                | a string from the exploration scope *e.g.* 'label' | Selects the objects events occuring after another object event in the execution history.         |
-| 11 | Limit              | number:               | integer                                            | Selects the first results of the query depending on a given number.                              |
-| 12 | Argument           | in:                   | an array of objects                                | Selects the interactions using in their arguments at least one of values the given in parameter. |
-| 13 | Selector           | in:                   | an array of selector symbols                       | Selects the interactions using at least one of the selectors given in parameter                  |
-
-### Scopeo in-progress version's predicates
-
-|    | **Predicate name**           | **Condition parameter**            | **Description**                                                                           |
-|----|------------------------------|------------------------------------|-------------------------------------------------------------------------------------------|
-| 1  | ScpIsMessage                 | $\emptyset$                        | Selects the objects events refering to a message send.                                    |
-| 3  | ScpIsStateUpdate             | $\emptyset$                        | Selects the objects events refering to state updates.                                     |
-| 4  | ScpAssignmentNewValueEq Type | an object                          | Selects the assignments of the value given in parameter.                                  |
-| 5  | ScpAssignmentObjectEq        | an object                          | Selects the assignments to an instance variable of the object passed in parameter.        |
-| 6  | ScpAssignmentOldValueEq      | an object                          | Selects the assignments to an instance variable containing the value passed in parameter. |
-| 7  | ScpAssignmentVariableNameEq  | a string                           | Selects the assignments to an instance variable named as defined in parameter.            |
-| 8  | ScpMessageArgumentsContains  | an array of values (objects)       | Selects the messages containing in the arguments the objects passed in parameter.         |
-| 9  | ScpMessageReceiverEq         | an object                          | Selects the messages to the object passed in parameter.                                   |
-| 10 | ScpMessageSelectorEq         | a symbol representing the selector | Selects the messages using the selector given in parameter.                               |
-| 11 | ScpMessageSenderClassEq      | a class object                     | Selects the messages sent by an object of the class given in parameter.                   |
-| 12 | ScpMessageSenderEq           | an object                          | Selects the messages sent by the object passed in parameter.                              |
 
 ## GUI example of Scopeo usage
 

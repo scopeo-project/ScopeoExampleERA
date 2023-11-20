@@ -1,22 +1,156 @@
 # ScopeoExampleERA
 
 Table of contents:
- 1. [Install](#installation)
- 2. [Example](#example-of-scopeo-usage-on-a-failing-unit-test)
- 3. [Benchmark](#how-to-run-a-benchmark)
+- [ScopeoExampleERA](#scopeoexampleera)
+	- [Introduction](#introduction)
+	- [Scopeo's predicates](#scopeos-predicates)
+		- [Scopeo initial version's predicates](#scopeo-initial-versions-predicates)
+		- [Scopeo in-progress version's predicates](#scopeo-in-progress-versions-predicates)
+	- [GUI example of Scopeo usage](#gui-example-of-scopeo-usage)
+		- [Scenario, the Grapevine Game](#scenario-the-grapevine-game)
+	- [Script example of Scopeo usage](#script-example-of-scopeo-usage)
+		- [Install Scopeo and try it yourself](#install-scopeo-and-try-it-yourself)
 
-## Installation
+## Introduction
 
-To install the project, execute the following baseline in a Pharo 12 image.
+This document presents two examples of how to use Scopeo, an omniscient debugger that records execution data and provide a list of predicates in combination with an exploration scope to explore this data.
+
+This first example has been written with a prior version of Scopeo relying on [Seeker](https://github.com/maxwills/SeekerDebugger) as a backend for collecting the execution information.
+The following picture is a screenshot of Scopeo's UI at that time.  
+![Scopeo's GUI](resources/scopeo-screenshot-new.png)
+
+Since Scopeo is a work-on-progress, we updated it for the need of our research.  
+The UI is not anymore avalaible in the project, we plan to add it back for our future demonstrations.
+However, the second example shows how to use Scopeo as a scriptable debugger.
+
+We also detail the list of predicates available in the two versions of Scopeo.
+
+## Scopeo's predicates
+
+In both versions the list of predicates is extendable.  
+In our future research, we plan to study questions developers ask while debugging to define the minimal list of predicates required to cover these questions.
+
+### Scopeo initial version's predicates
+
+|    | **Predicate name** | **Condition keyword** | **Condition parameter**                            | **Description**                                                                                  |
+|----|--------------------|-----------------------|----------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| 1  | IsInteraction      | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to interactions.                                             |
+| 2  | IsStateAccess      | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to state accesses.                                           |
+| 3  | IsStateUpdate      | $\emptyset$           | $\emptyset$                                        | Selects the objects events refering to state updates.                                            |
+| 4  | Type               | of:                   | a class object                                     | Selects the objects events refering to a given class instances and no other types.               |
+| 5  | WithType           | of:                   | a class object                                     | Selects the objects events refering to at least one instance of the a given class.               |
+| 6  | Result             | number:               | an array of integers                               | Selects rows in the list of the query results, depending on the given row numbers.               |
+| 7  | Going              | to:                   | a string from the exploration scope *e.g.* 'label' | Selects an object's incoming interactions.                                                       |
+| 8  | Coming             | from:                 | a string from the exploration scope *e.g.* 'label' | Selects an object's outgoing interactions.                                                       |
+| 9  | OccuredBefore      | event:                | a string from the exploration scope *e.g.* 'label' | Selects the objects events occuring before another object event in the execution history.        |
+| 10 | OccuredAfter       | event:                | a string from the exploration scope *e.g.* 'label' | Selects the objects events occuring after another object event in the execution history.         |
+| 11 | Limit              | number:               | integer                                            | Selects the first results of the query depending on a given number.                              |
+| 12 | Argument           | in:                   | an array of objects                                | Selects the interactions using in their arguments at least one of values the given in parameter. |
+| 13 | Selector           | in:                   | an array of selector symbols                       | Selects the interactions using at least one of the selectors given in parameter                  |
+
+### Scopeo in-progress version's predicates
+
+|    | **Predicate name**           | **Condition parameter**            | **Description**                                                                           |
+|----|------------------------------|------------------------------------|-------------------------------------------------------------------------------------------|
+| 1  | ScpIsMessage                 | $\emptyset$                        | Selects the objects events refering to a message send.                                    |
+| 3  | ScpIsStateUpdate             | $\emptyset$                        | Selects the objects events refering to state updates.                                     |
+| 4  | ScpAssignmentNewValueEq Type | an object                          | Selects the assignments of the value given in parameter.                                  |
+| 5  | ScpAssignmentObjectEq        | an object                          | Selects the assignments to an instance variable of the object passed in parameter.        |
+| 6  | ScpAssignmentOldValueEq      | an object                          | Selects the assignments to an instance variable containing the value passed in parameter. |
+| 7  | ScpAssignmentVariableNameEq  | a string                           | Selects the assignments to an instance variable named as defined in parameter.            |
+| 8  | ScpMessageArgumentsContains  | an array of values (objects)       | Selects the messages containing in the arguments the objects passed in parameter.         |
+| 9  | ScpMessageReceiverEq         | an object                          | Selects the messages to the object passed in parameter.                                   |
+| 10 | ScpMessageSelectorEq         | a symbol representing the selector | Selects the messages using the selector given in parameter.                               |
+| 11 | ScpMessageSenderClassEq      | a class object                     | Selects the messages sent by an object of the class given in parameter.                   |
+| 12 | ScpMessageSenderEq           | an object                          | Selects the messages sent by the object passed in parameter.                              |
+
+## GUI example of Scopeo usage
+
+### Scenario, the Grapevine Game
+
+The Grapevine game consists in a chain of players where each player has to whisper a secret to the next player.  
+The group of players win the game when the secret understood by the last player in the chain is identical to the initial one.  
+The difficulty to understand secrets lies in the fact that they are whispered. 
 
 ```st
-Metacello new
-  githubUser: 'ValentinBourcier' project: 'ScopeoExampleERA' commitish: 'main' path: 'src';
-  baseline: 'ScopeoExampleERA';
-  load
+1  Player>>#hear: aSecret
+2		| alphabet heardLetter |
+3       secret := aSecret.
+4		Random new next < 0.2 ifFalse: [ ^ self ].
+5		alphabet := Character alphabet asUppercase asOrderedCollection.
+6		heardLetter := alphabet remove: aSecret first; atRandom.
+7		secret := heardLetter asString, aSecret allButFirst
 ```
 
-## Example of Scopeo usage on a failing unit test
+The above code snippets shows how we simulate the difficulty to understand whispered secret.  
+In line 6, we introduced a 20\% probability that the players do not hear the correct secret.   
+When a player does not understand the secret, it replaces the first letter of the secret with a random one (lines 5-7).  
+The game runs ten rounds and starts with a base of player objects.  
+At each round, new players join the game and others leave randomly.  
+The secret conveyed on each new round is the string *"Hello world !"*.  
+At the end of each round, the last player prints the secret it received and the game compares with the original secret.  
+Statistically, at each round the last player prints a wrong secret.  
+
+**In this example, our goal is to understand what happened during the fourth round (this is arbitrary for the sake of our demonstration).**  
+To understand the execution of the fourth iteration of the Grapevine game in the scenario we have to gain access to the player objects involved in this iteration.  
+For this, we use Scopeo's predicates to ask for all the messages using the accessor `#secret`.  
+```st
+Selector in: {#secret}
+```
+The `Selector` predicate filters the messages using the `#secret` accessor.   
+It returns twenty results because secrets of the first and last player are compared at each round.  
+The first and last player of the fourth round are therefore the seventh and eighth results in the list.   
+To only collect these players we add the `Result` predicate with the row numbers **7 and 8** in argument.  
+```st
+(Selector in: {#secret}) and: (Result number: #(7 8))
+```
+The following screenshot shows the list of messages using the accessor `#secret` in the fourth round.
+
+![Results of the query (Selector in: {#secret}) and: (Result number: #(7 8))](resources/querysecretresults.png)
+
+The result list contains two elements.
+To know which one of these messages refers to the first or last player we press the *Time travel to* button.  
+This action brings us to the context of execution of the selected message.
+Execution context of the second `#secret` message:
+
+![Execution context of the second #secret message](resources/querysecretresultstt.png)
+
+The above screenshot shows the code editor content after time traveling to the second message from the list of results from the second query.  
+Line 10, the code highlighted in orange is responsible for the message send. The accessor is called on the last player of the game.  
+After asking Pharo to print the value of the expression `last secret` the secret value *Jello world !* is printed as a comment at the end of line 10.   
+
+As the scenario ask to understand the execution of the fourth game round, we wonder where this *Jello world !* secret comes from ?  
+To answer this question, we cannot query the entire execution history to search all the `hear:` messages sent with *Jello world !* as an argument because it will return messages from other rounds than the fourth one.  
+This is where we add the results of the second query to the exploration scope. 
+
+![Exploration scope](resources/scope.png)
+
+This screenshot of the exploration scope's UI shows that we stored the *firstplayer* and the *lastplayer* object, by selecting them from the code editor using Scopeo's contextual menu.  
+In the exploration scope we also stored the `whisper` (line 8 of the execution context of the second `#secret` message) message sent to the first player of the fourth chain, and the `secret` (line 10 of the execution context of the second `#secret` message) message sent to the last player of the fourth round.  
+We can formulate a new query refering to the messages located between the two messages stored in the exploration scope.  
+
+```st
+((OccuredAfter event: 'firstplayerwhisper') 
+    and: (OccuredBefore event: 'lastplayersecret')) 
+    and: (Argument in: {'Jello world !'})
+```
+
+The above query is searching for all the object events that occured between the messages labelled by *firstplayerwhisper and lastplayersecret* which transmit the value *Jello world !.*
+
+![Chain of interactions](resources/chain.png)
+
+The screenshot shows the chain of messages who transmitted the value *Jello world !*.  
+We observe that the player number 338 is the first to convey the secret *Jello world !* therefore we suppose that this object has transformed the secret it has received.  
+To verify this hypothesis we begin a new iteration of the exploration scoping loop, by adding to the exploration scope (S3) the player 338 and the message it to player 374.  
+Then we and ask for the first `hear:` message received by player 338 before the message it sent to player 374.  
+Traveling to the resulting message allows us to print the value of the secret such as we did before.
+
+![Hear 338](resources/hear338.png)
+
+This last screenshot shows that player 338 received the secret *Hello world !* which means that the last hypothesis was correct, the player 338 transformed the secret.
+Using Scopeo we successfully scoped the exploration around the fourth round of grapevine game and explored the interactions betweens the objects involved in this round to identify the object responsible for the outcome of the game round.
+
+## Script example of Scopeo usage
 
 Ammolite is an application that divide student promotions into homogeneous sub-groups.  
 Sub-groups are calculated depending on the level of each student, which is representer by a marker '-' or '+'.  
@@ -44,7 +178,7 @@ Step 1: Run the code using Scopeo.
 | scopeo allPrintedStudents failingStudent messagesToFailingStudent markerSetToEmpty |
 
 scopeo := ScpTraces new.
-scopeo scan: 'AMParsingBugExample new testStudentPrinting'.
+scopeo scan: [ AMParsingBugExample new testStudentPrinting ].
 ```
 
 Step 2: Run a first query to find all messages sent using selector `#textPrintStudent:on:`.
@@ -85,95 +219,23 @@ Step 6. Browse the source code of the sender of the message setting the marker t
 (markerSetToEmpty sender class >> markerSetToEmpty senderSelector) browse.
 ```
 
-Step 7. In AMParsingBugExample >> #students we search for Raymond-Tristan, our failing student.
+Step 7. In `AMParsingBugExample >> #students` we search for Raymond-Tristan, our failing student.
   The student has no marker -> the problem therefore comes from the data
   
 ```st
 (AMParsingBugExample >> #students) browse.
 ```
 
-## How to run benchmarks?
+### Install Scopeo and try it yourself
 
-To perform queries about the execution, the tool needs to record information about the program execution.  
-To calculate the overhead we performed benchmarks with:
-1. **performWithPharo**: Pharo 12
-2. **performWithDAST**: DAST interpreter (an AST interpreter dedicated to debugging).
-3. **performWithDASTAndTraces**: A modified DAST intepreter that sends the program information to another object, for later storage.
-4. **performWithInstrumenter**: Instrumentation of the code by a library relying on MetaLink from Pharo Reflectivity library.
-5. **performWithInstrumenterAndTraces**: Instrumentation of the code by the library modified to transform the raw data and send it to another object, for later storage.
-6. **performWithInstrumenterInstallation**: Only installation and uninstallation of the instrumentation.
-
-The code used to realise the benchmarks is the unit test presented in the [Example](#example-of-scopeo-usage-on-a-failing-unit-test) as evaluation program.  
-
-There is two parameters to launch the benchmarks:
-1. **loops** The number of time the unit test must be executed to represent a measure point.  
-   It is required because the execution of the test may takes less than the millisecond with Pharo 12 which is the reference benchmark. 
-2. **measures** The number of measure point desired.  
-
-We executed each benchmark in a fresh new image on a MacBook Pro (14-inch, 2021) using the code as follow.
-
-### Reference benchmark, with Pharo
+To install the project, execute the following baseline in a Pharo 12 image.
 
 ```st
-ScopeoBenchmarks new
-	numberOfBlockIterations: 100;
-	numberOfMeasures: 100;
-	performWithPharo;
-	exportRawResults: '/Users/<username>/benchmark-withPharo-100i-100m-raw.csv';
-	exportResults: '/Users/<username>/benchmark-withPharo-100i-100m.csv'.
+Metacello new
+  githubUser: 'ValentinBourcier' 
+  	project: 'ScopeoExampleERA' 
+  	commitish: 'main' path: 'src';
+  baseline: 'ScopeoExampleERA';
+  load
 ```
 
-### Benchmark of the AST interpreter
-
-```st
-ScopeoBenchmarks new
-	numberOfBlockIterations: 100;
-	numberOfMeasures: 100;
-	performWithDAST;
-	exportRawResults: '/Users/<username>/benchmark-withDAST-100i-100m-raw.csv';
-	exportResults: '/Users/<username>/benchmark-withDAST-100i-100m.csv'.
-```
-
-### Benchmark of the AST interpreter collecting traces
-
-```st
-ScopeoBenchmarks new
-	numberOfBlockIterations: 100;
-	numberOfMeasures: 100;
-	performWithDASTAndTraces;
-	exportRawResults: '/Users/<username>/benchmark-withDASTAndTraces-100i-100m-raw.csv';
-	exportResults: '/Users/<username>/benchmark-withDASTAndTraces-100i-100m.csv'.
-```
-
-### Benchmark of the instrumented code
-
-```st
-ScopeoBenchmarks new
-	numberOfBlockIterations: 100;
-	numberOfMeasures: 100;
-	performWithInstrumenter;
-	exportRawResults: '/Users/<username>/benchmark-withInstrumenter-100i-100m-raw.csv';
-	exportResults: '/Users/<username>/benchmark-withInstrumenter-100i-100m.csv'.
-```
-
-### Benchmark of the instrumented code with raw data to trace transformation
-
-```st
-ScopeoBenchmarks new
-	numberOfBlockIterations: 100;
-	numberOfMeasures: 100;
-	performWithInstrumenterAndTraces;
-	exportRawResults: '/Users/<username>/benchmark-withInstrumenterAndTraces-100i-100m-raw.csv';
-	exportResults: '/Users/<username>/benchmark-withInstrumenterAndTraces-100i-100m.csv'.
-```
-
-### Benchmark of the code instrumentation, install + uninstall
-
-```st
-ScopeoBenchmarks new
-	numberOfBlockIterations: 1;
-	numberOfMeasures: 100;
-	performWithInstrumenterInstallation;
-	exportRawResults: '/Users/<username>/benchmark-withInstrumenterInstallation-100i-100m-raw.csv';
-	exportResults: '/Users/<username>/benchmark-withInstrumenterInstallation-100i-100m.csv'.
-```

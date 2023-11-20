@@ -4,21 +4,20 @@ Table of contents:
 - [ScopeoExampleERA](#scopeoexampleera)
 	- [Introduction](#introduction)
 	- [Scopeo's predicates](#scopeos-predicates)
-	- [GUI example of Scopeo usage](#gui-example-of-scopeo-usage)
-		- [Scenario, the Grapevine Game](#scenario-the-grapevine-game)
-	- [Script example of Scopeo usage](#script-example-of-scopeo-usage)
+	- [Using Scopeo as a time-travel debugger](#using-scopeo-as-a-time-travel-debugger)
+	- [Using Scopeo as a scriptable debugger](#using-scopeo-as-a-scriptable-debugger)
 		- [Install Scopeo and try it yourself](#install-scopeo-and-try-it-yourself)
 
 ## Introduction
 
-This document presents two examples of how to use Scopeo, an omniscient debugger that records execution data and provide a list of predicates in combination with an exploration scope to explore this data.
+This document presents two examples of how to use Scopeo, an omniscient debugger that records execution data and provide a list of predicates in combination with an exploration scope to explore this data.  
 
-The following screenshot presents Scopeo's UI.
+The following screenshot presents Scopeo's UI.  
 ![Scopeo's GUI](resources/scopeo-screenshot-new.png)
 
-We detail the list of predicates available in Scopeo.
-In a first debugging example we show how Scopeo works using [Seeker](https://github.com/maxwills/SeekerDebugger) a time-travel debugger as backend for collecting information during the live execution of the program.
-In a second example, we show how to use Scopeo as a back-in-time scriptable debugger, to collect and analyse the execution information after its termination *i.e.* post-mortem.
+We detail the list of predicates available in Scopeo.  
+In a first debugging example we show how Scopeo works using [Seeker](https://github.com/maxwills/SeekerDebugger) a time-travel debugger as backend for collecting information during the live execution of the program.  
+In a second example, we show how to use Scopeo as a back-in-time scriptable debugger, to collect and analyse the execution information after its termination *i.e.* post-mortem.  
 
 ## Scopeo's predicates
 
@@ -47,9 +46,7 @@ In our future research, we plan to study questions developers ask while debuggin
 | MessageSenderClassEq     | value:                | a class object                                     | Selects the messages sent by an object of the class given in parameter.                   |
 | MessageSenderEq          | value:                | an object                                          | Selects the messages sent by the object passed in parameter.                              |
 
-## GUI example of Scopeo usage
-
-### Scenario, the Grapevine Game
+## Using Scopeo as a time-travel debugger
 
 The Grapevine game consists in a chain of players where each player has to whisper a secret to the next player.  
 The group of players win the game when the secret understood by the last player in the chain is identical to the initial one.  
@@ -133,7 +130,7 @@ Traveling to the resulting message allows us to print the value of the secret su
 This last screenshot shows that player 338 received the secret *Hello world !* which means that the last hypothesis was correct, the player 338 transformed the secret.
 Using Scopeo we successfully scoped the exploration around the fourth round of grapevine game and explored the interactions betweens the objects involved in this round to identify the object responsible for the outcome of the game round.
 
-## Script example of Scopeo usage
+## Using Scopeo as a scriptable debugger
 
 Ammolite is an application that divide student promotions into homogeneous sub-groups.  
 Sub-groups are calculated depending on the level of each student, which is representer by a marker '-' or '+'.  
@@ -211,7 +208,8 @@ markerSetToEmpty := messagesToFailingStudent third. "Step 5.5"
 
 ### Install Scopeo and try it yourself
 
-To install the project, execute the following baseline in a Pharo 12 image.
+You can reproduce the scenario entitled "Using Scopeo as a scriptable debugger".
+To do so, install the project, execute the following baseline in a Pharo 12 image.
 
 ```st
 Metacello new
@@ -221,4 +219,9 @@ Metacello new
   baseline: 'ScopeoExampleERA';
   load
 ```
+
+Then open a playground (via "command + OW" or the menu "Browse"), and follow the steps of the scenario.
+At each step you can:
+- Copy the given code snippet.
+- Inspect the code by doing a right-click > inspect, after selecting the code.
 

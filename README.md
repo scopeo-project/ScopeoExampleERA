@@ -62,7 +62,7 @@ The difficulty to understand secrets lies in the fact that they are whispered.
 7		secret := heardLetter asString, aSecret allButFirst
 ```
 
-The above code snippets shows how we simulate the difficulty to understand whispered secret.  
+The above code snippets shows how we simulate the difficulty to understand a whispered secret.  
 In line 6, we introduced a 20\% probability that the players do not hear the correct secret.   
 When a player does not understand the secret, it replaces the first letter of the secret with a random one (lines 5-7).  
 The game runs ten rounds and starts with a base of player objects.  
@@ -133,7 +133,7 @@ Using Scopeo we successfully scoped the exploration around the fourth round of g
 ## Using Scopeo as a scriptable debugger
 
 Ammolite is an application that divide student promotions into homogeneous sub-groups.  
-Sub-groups are calculated depending on the level of each student, which is representer by a marker '-' or '+'.  
+Sub-groups are calculated depending on the level of each student, which is represented by a marker '-' or '+'.  
 
 The following test verifies that when printing a student text representation, the last character is the marker, '-' or '+'.
 
@@ -180,7 +180,7 @@ messagesToFailingStudent := scopeo fetch: (ScpIsMessage new and: (ScpMessageRece
   1. The failing student has received 6 messages.
   2. The last of these messages is an access to the marker of the failing student made by `AMGroup >> #textPrintStudent:on:`.
   3. The source code of `AMGroup >> #textPrintStudent:on:` shows that the student marker is concatenated at the end of the stream. 
-     So the test expects the as last character a marker, '-'or '+'.
+     So the test expects the as last character a marker, '-' or '+'.
   4. The marker of the failing student is an empty string, which is why the test fails.
   5. The marker of the failing student has been set to an empty string by the third message.
 
@@ -209,7 +209,7 @@ markerSetToEmpty := messagesToFailingStudent third. "Step 5.5"
 ### Install Scopeo and try it yourself
 
 You can reproduce the scenario entitled "Using Scopeo as a scriptable debugger".
-To do so, install the project, execute the following baseline in a Pharo 12 image.
+To do so, install the project by executing the following baseline in a Pharo 12 image.
 
 ```st
 Metacello new
@@ -220,7 +220,7 @@ Metacello new
   load
 ```
 
-Then open a playground (via "command + OW" or the menu "Browse"), and follow the steps of the scenario.
+Then open a playground (via the shortcut "command + O + W" or the menu "Browse"), and follow the steps of the scenario.
 At each step you can:
 - Copy the given code snippet.
 - Inspect the code by doing a right-click > inspect, after selecting the code.

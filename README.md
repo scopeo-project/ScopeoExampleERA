@@ -47,7 +47,6 @@ In our future research, we plan to study questions developers ask while debuggin
 | MessageSenderClassEq     | value:                | a class object                                     | Selects the messages sent by an object of the class given in parameter.                   |
 | MessageSenderEq          | value:                | an object                                          | Selects the messages sent by the object passed in parameter.                              |
 
-
 ## GUI example of Scopeo usage
 
 ### Scenario, the Grapevine Game
@@ -157,7 +156,7 @@ AMParsingBugExample >> testStudentPrinting
 But the test fails. When printing the text representation of a student named Raymond-Tristan, the last character is 'n'.  
 How to debug it with Scopeo:
 
-Step 1: Run the code using Scopeo.
+**Step 1:** Run the code using Scopeo.
 ```st
 | scopeo allPrintedStudents failingStudent messagesToFailingStudent markerSetToEmpty |
 
@@ -165,22 +164,22 @@ scopeo := ScpTraces new.
 scopeo scan: [ AMParsingBugExample new testStudentPrinting ].
 ```
 
-Step 2: Run a first query to find all messages sent using selector `#textPrintStudent:on:`.
+**Step 2:** Run a first query to find all messages sent using selector `#textPrintStudent:on:`.
 ```st
 allPrintedStudents := scopeo fetch: (ScpIsMessage new and: (ScpMessageSelectorEq value: #textPrintStudent:on:)).
 ```
 
-Step 3: The last student is the one that has triggered the exception (Raymond-Tristan).
+**Step 3:** The last student is the one that has triggered the exception (Raymond-Tristan).
 ```st
 failingStudent := allPrintedStudents last arguments first.
 ```
 
-Step 4: Run a second query to collect all messages sent to the failing student.
+**Step 4:** Run a second query to collect all messages sent to the failing student.
 ```st
 messagesToFailingStudent := scopeo fetch: (ScpIsMessage new and: (ScpMessageReceiverEq value: failingStudent)).
 ```
 
-Step 5: Investigation based on the messages received by the failing student.
+**Step 5:** Investigation based on the messages received by the failing student.
   1. The failing student has received 6 messages.
   2. The last of these messages is an access to the marker of the failing student made by `AMGroup >> #textPrintStudent:on:`.
   3. The source code of `AMGroup >> #textPrintStudent:on:` shows that the student marker is concatenated at the end of the stream. 
@@ -194,7 +193,7 @@ failingStudent marker. "Step 5.4"
 markerSetToEmpty := messagesToFailingStudent third. "Step 5.5"
 ```
 
-Step 6. Browse the source code of the sender of the message setting the marker to an empty string.
+**Step 6:** Browse the source code of the sender of the message setting the marker to an empty string.
   1. The sender is `AMParsingBugExample >> #promotion`.
   2. At the line 7 we see a loop over the lines of a text stream.
   3. The stream is created from the accessor `AMParsingBugExample >> #students`.
@@ -203,7 +202,7 @@ Step 6. Browse the source code of the sender of the message setting the marker t
 (markerSetToEmpty sender class >> markerSetToEmpty senderSelector) browse.
 ```
 
-Step 7. In `AMParsingBugExample >> #students` we search for Raymond-Tristan, our failing student.
+**Step 7:** In `AMParsingBugExample >> #students` we search for Raymond-Tristan, our failing student.
   The student has no marker -> the problem therefore comes from the data
   
 ```st

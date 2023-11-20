@@ -13,14 +13,20 @@ BaselineOfScopeoExampleERA >> baseline: spec [
 		
 		spec baseline: 'AmmoliteMagenta' with: [
 			spec repository:
-				'github://StevenCostiou/AmmoliteMagenta:failing-test-example' ].
+				'github://ValentinBourcier/AmmoliteMagenta:scopeo-example-era' ].
 		
 		spec package: #'Scopeo-Predicates'.
 		spec package: #'Scopeo-Instrumenter'.
 		
 		spec package: #'Scopeo-Traces'.
-		spec package: #'Scopeo-Traces-Tests'.
 		spec package: #'Scopeo-Traces-Tests-Objects'.
-		
-		spec package: #'Scopeo-Benchmark' ]
+
+		spec package: #'Scopeo-Traces-Tests'
+			with: [ spec requires: #( 'Scopeo-Traces' 'Scopeo-Traces-Tests-Objects') ].
+			
+		spec package: 'AmmoliteMagenta'.
+		spec
+			package: 'AmmoliteMagenta-Tests'
+			with: [ spec requires: #( 'AmmoliteMagenta' ) ].
+	]
 ]
